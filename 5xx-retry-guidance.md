@@ -22,7 +22,7 @@ slightly different lists.
 
 ## Evidence From Implementations
 
-All major clients implement retry on 5xx, confirming this is an operational necessity:
+The following clients implement retry on 5xx, suggesting this is an operational necessity:
 
 - **containerd** — [`core/remotes/docker/resolver.go#L777-L779`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777-L779)
   ```go

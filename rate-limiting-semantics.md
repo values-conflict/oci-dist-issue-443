@@ -1,4 +1,4 @@
-# Missing: 429 Rate-Limiting Response Body and Semantics
+# Missing: RFC References for 429 Rate-Limiting Behavior
 
 **Priority:** Important  
 **Affects:** All endpoints  
@@ -6,90 +6,51 @@
 
 ## What Was Lost
 
-The `TOOMANYREQUESTS` error code appears in the current spec's error table (code-14), but:
+The `TOOMANYREQUESTS` error code appears in the current spec's error table (code-14) with a
+one-line description "too many requests" and no further guidance. The spec does not reference
+the RFCs that define this behavior, leaving implementers without normative grounding.
 
-1. There is no description of *when* it should be returned.
-2. There is no requirement that the 429 response include a JSON error body.
-3. There is no mention of the `Retry-After` header that registries use to signal backoff delay.
-4. There is no guidance on whether clients should retry after receiving 429.
+The relevant standards are:
+- **RFC 6585** — defines the `429 Too Many Requests` HTTP status code and its use with a
+  `Retry-After` header.
+- **RFC 9110 §10.2.3** — defines the `Retry-After` header semantics (already referenced in
+  spec for Range support; §10.2.3 is the applicable sub-section for retry).
 
-The deleted `detail.md` documented `429 Too Many Requests` with a `TOOMANYREQUESTS` error
-body as a defined response for *every single endpoint*, treating it as a first-class response
-code on par with 401 and 404. The original `spec_before.md` error table similarly listed
-`TOOMANYREQUESTS` as a full peer code, not as an afterthought.
-
-The current one-line description "too many requests" gives no actionable guidance to either
-registry authors or client authors.
+Both are not currently cited in the spec. Any implementer reading RFC 6585 would know that
+429 SHOULD include a `Retry-After` header and that clients SHOULD back off accordingly — this
+behavior does not need new normative prose, just the citations.
 
 ## Evidence From Implementations
 
-### Servers emitting 429 with body and Retry-After
+The following implementations follow RFC 6585 behavior without being directed to by the spec:
 
 - **olareg** — [`olareg.go#L184-L185`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg.go#L184-L185)
-  ```go
-  resp.Header().Add("Retry-After", "1")
-  resp.WriteHeader(http.StatusTooManyRequests)
-  ```
-
-- **olareg** — [`types/errors.go#L160-L165`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go#L160-L165)
-  ```go
-  func ErrInfoTooManyRequests(d string) ErrorInfo {
-      ...Code: "TOOMANYREQUESTS",
-  ```
-
-- **distribution** (server) — [`registry/api/errcode/register.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/errcode/register.go)
-  `TOOMANYREQUESTS` registered with `HTTPStatusCode: http.StatusTooManyRequests`.
-
-- **cue-labs-oci** — [`ociregistry/error.go#L334`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L334)
-  ```go
-  ErrTooManyRequests = NewError("too many requests", "TOOMANYREQUESTS", nil)
-  ```
-
-### Clients reading Retry-After and backing off
+  Emits `Retry-After: 1` with every 429 response.
 
 - **regclient** — [`internal/reghttp/http.go#L663-L686`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L663-L686)
-  ```go
-  if resp.resp.Header.Get("Retry-After") != "" {
-      ras := resp.resp.Header.Get("Retry-After")
-      ra, _ := time.ParseDuration(ras + "s")
-      // uses ra as backoff delay
-  ```
-  Reads `Retry-After` header and uses its value as the backoff duration.
+  Reads `Retry-After` and uses its value as the backoff duration.
 
 - **containerd** — [`core/remotes/docker/resolver.go#L777`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777)
-  ```go
-  case http.StatusRequestTimeout, http.StatusTooManyRequests:
-      return true, nil
-  ```
-  429 is retried, same as 408.
+  Retries on 429, same as 408.
 
 - **google/go-containerregistry** — [`pkg/v1/remote/transport/error.go#L133-L144`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go#L133-L144)
-  `TOOMANYREQUESTS` in `temporaryErrorCodes` — triggers retry logic.
+  `TOOMANYREQUESTS` in `temporaryErrorCodes` — triggers retry.
 
 ## Proposed Fix
 
-### Amend the `TOOMANYREQUESTS` entry in [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes)
+No new normative prose is needed. Add RFC citations in two places:
 
-Change the current one-line description to:
+### 1. Amend the `TOOMANYREQUESTS` row in [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes)
 
 ```markdown
-| code-14 | `TOOMANYREQUESTS` | The client has sent too many requests in a given amount of time. The client SHOULD wait before retrying. |
+| code-14 | `TOOMANYREQUESTS` | too many requests; see [RFC 6585](https://www.rfc-editor.org/rfc/rfc6585#section-4) |
 ```
 
-### Add a subsection in [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes)
-
-After the error code table (before [§Warnings](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#warnings)), add:
+### 2. Add a sentence to [§Warnings](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#warnings) or §Error Codes
 
 ```markdown
-#### Rate Limiting
-
-A registry MAY enforce rate limits on clients and return `429 Too Many Requests` when limits
-are exceeded.
-A `429` response SHOULD include a JSON error body with `TOOMANYREQUESTS` as the error code.
-A `429` response SHOULD include a `Retry-After` header indicating the number of seconds the
-client SHOULD wait before retrying the request.
-
-Clients SHOULD treat `429` responses as transient and retry the request after the delay
-indicated by the `Retry-After` header, or after an implementation-defined backoff if no
-`Retry-After` header is present.
+When a registry returns `429 Too Many Requests`, it SHOULD follow
+[RFC 6585 §4](https://www.rfc-editor.org/rfc/rfc6585#section-4), including providing a
+`Retry-After` header per
+[RFC 9110 §10.2.3](https://www.rfc-editor.org/rfc/rfc9110#section-10.2.3).
 ```
