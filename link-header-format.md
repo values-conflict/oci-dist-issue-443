@@ -4,6 +4,16 @@
 **Affects:** `GET /v2/<name>/tags/list` (end-8b), `GET /v2/<name>/referrers/<digest>` (end-12a)  
 **Current spec location:** [§Listing Tags](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-tags), [§Listing Referrers](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-referrers)
 
+## Related Issues
+
+- [#443](https://github.com/opencontainers/distribution-spec/issues/443) (open): @jonjohnsonjr [comments](https://github.com/opencontainers/distribution-spec/issues/443#issuecomment-1645701222): "I can't find any reference to the pagination mechanism for tag listing. I think this got dropped when catalog was [re]moved? It makes a lot more sense to me now that folks had started inventing new pagination mechanisms for the referrers API: they didn't have the existing mechanism to copy!"
+- [#327](https://github.com/opencontainers/distribution-spec/issues/327) (open): "Inconsistent specification for endpoint end-8b's parameter `last`" — the endpoint table lists `last` as `<integer>` while the prose requires it to be a tag name; a separate pagination inconsistency that also traces to the lost detail.
+
+## Related PRs
+
+- [#496](https://github.com/opencontainers/distribution-spec/pull/496) — "Restore pagination information" (closed, **not merged**): explicitly attempted to restore this exact content from commit `c90b0f1`, including the angle-bracket example, the termination-condition statement, and the worked example. The PR body notes "This was restored from c90b0f145ac6bc09d2636ee214486ac333edc284."
+- [#470](https://github.com/opencontainers/distribution-spec/pull/470) — "Tag pagination" (merged): added the `n`/`last` parameter language and the RFC 5988 `Link` header requirement now in the current spec. Did **not** restore the example or termination-condition statement.
+
 ## Note on RFC Coverage
 
 The angle-bracket syntax for `Link` headers is defined in

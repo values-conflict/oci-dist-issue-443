@@ -20,6 +20,10 @@ Both are not currently cited in the spec. Any implementer reading RFC 6585 would
 429 SHOULD include a `Retry-After` header and that clients SHOULD back off accordingly — this
 behavior does not need new normative prose, just the citations.
 
+## Related PRs
+
+- [#209](https://github.com/opencontainers/distribution-spec/pull/209) — "spec: add missing TOOMANYREQUESTS (429) error-code" (merged): added `TOOMANYREQUESTS` to the error code table. Did **not** add RFC 6585 or RFC 9110 §10.2.3 citations.
+
 ## Evidence From Implementations
 
 The following implementations follow RFC 6585 behavior without being directed to by the spec:

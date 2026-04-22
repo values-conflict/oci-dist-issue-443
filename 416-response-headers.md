@@ -42,6 +42,16 @@ This loses:
 Directing clients to "issue a GET request to retrieve the current valid offset" is weaker than
 having the 416 response itself carry the recovery information — it adds a round-trip.
 
+## Related Issues
+
+- [#355](https://github.com/opencontainers/distribution-spec/issues/355) (open): "Critical response headers should have compliance tests" — calls out missing response headers (including on the upload endpoints) as a gap between the conformance tests and real-world interoperability.
+- [#590](https://github.com/opencontainers/distribution-spec/issues/590) (closed): "HTTP status code for a blob PUT with an invalid range" — spawned PR #593.
+
+## Related PRs
+
+- [#593](https://github.com/opencontainers/distribution-spec/pull/593) — "Clarify that 416 is valid on a blob put" (merged): confirmed 416 is a valid response for the closing `PUT` of an upload. Does **not** address the response headers (`Location`, `Range`, `Content-Length: 0`) that must accompany a 416 on a `PATCH` so the client can recover without a separate `GET`.
+- [#366](https://github.com/opencontainers/distribution-spec/pull/366) — "Add a patch status to recover failed requests" (merged): added the `GET /v2/<name>/blobs/uploads/<reference>` endpoint (end-13) as a recovery mechanism. The current spec directs clients to issue a `GET` after a 416; our issue is that the 416 itself should carry enough headers to avoid that extra round-trip.
+
 ## Evidence From Implementations
 
 - **distribution** — [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72)

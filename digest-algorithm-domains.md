@@ -46,6 +46,14 @@ The dropped IMPORTANT note is a security requirement, not just a nicety. A serve
 a false `Docker-Content-Digest` (e.g., due to a bug or a MITM) could cause a naive client to
 accept incorrect content if the client prefers the server header over its own calculation.
 
+## Related Issues
+
+- [#604](https://github.com/opencontainers/distribution-spec/issues/604) (open): "Specify what to use instead of legacy Docker-Content-Digest" — points out the internal contradiction: the spec calls the header "legacy" in one place but requires it elsewhere, and never explains what clients should do to verify content without it.
+
+## Related PRs
+
+- [#556](https://github.com/opencontainers/distribution-spec/pull/556) — "Explicitly recommend content digest information" (merged): added "SHOULD verify" clauses to both blob and manifest pull sections (now spec lines 177, 192). This partially addresses the issue. What remains missing: the "different domains" conceptual framing, and the IMPORTANT admonition that `Docker-Content-Digest` SHOULD NOT be trusted *over* a locally-computed digest.
+
 ## Evidence From Implementations
 
 - **containerd** — [`core/remotes/docker/resolver.go#L689-L692`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L689-L692)

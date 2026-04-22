@@ -24,6 +24,11 @@ This feature allows a client to supply both a `sha256` and a `sha512` (or other 
 digest in the same request, enabling the registry to verify the blob using whichever algorithm
 it prefers or supports, without requiring a second round-trip.
 
+## Related PRs
+
+- [#543](https://github.com/opencontainers/distribution-spec/pull/543) — "Add digest-algorithm for non-canonical blob patches" (**open**): proposes an explicit `digest-algorithm` query parameter for specifying non-sha256 algorithms on `PATCH`; a related but different approach to the same multi-algorithm problem.
+- [#547](https://github.com/opencontainers/distribution-spec/pull/547) — "docs: faq entry for multiple digest algorithm support" (**open**): FAQ companion to #543.
+
 ## Evidence From Implementations
 
 - **cue-labs-oci** — [`ociregistry/internal/ocirequest/create.go#L56-L68`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/create.go#L56-L68)

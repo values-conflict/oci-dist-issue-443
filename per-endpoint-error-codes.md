@@ -43,6 +43,16 @@ Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID
 Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`,
 `BLOB_UPLOAD_UNKNOWN`, `SIZE_INVALID`.
 
+## Related Issues
+
+- [#443](https://github.com/opencontainers/distribution-spec/issues/443) (open): @corhere [comments](https://github.com/opencontainers/distribution-spec/issues/443#issuecomment-1644724047) on the weakening of error response requirements — the original spec's per-endpoint header/parameter tables (which included which error codes applied where) were lost in the reorganization.
+- [#413](https://github.com/opencontainers/distribution-spec/issues/413) (open): "Clarify multiple multiple-error semantics" — asks which error codes apply in which situations, which is exactly the per-endpoint information that was lost.
+- [#418](https://github.com/opencontainers/distribution-spec/issues/418) (open): "Error code requirement seems too strict" — argues the exhaustive list is both too strict and underdocumented in context.
+
+## Related PRs
+
+- [#555](https://github.com/opencontainers/distribution-spec/pull/555) — "Align endpoint status with rest of spec" (merged): aligned the endpoint table for delete operations and cross-repo mounts; added 202 to the mount endpoint. Did **not** add per-endpoint error code detail or add 400 to PUT manifest.
+
 ## Evidence From Implementations
 
 ### Servers that return specific 400-class error codes with bodies

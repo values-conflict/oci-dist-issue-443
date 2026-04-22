@@ -23,6 +23,10 @@ in a future spec version) has no guidance and may crash, error out, or behave un
 The companion statement — "error codes will only be added and never removed" — gave implementers
 a stability guarantee that is also now absent.
 
+## Related Issues
+
+- [#418](https://github.com/opencontainers/distribution-spec/issues/418) (open): "Error code requirement seems too strict" — directly about the same problem: the `code` field MUST be one of the listed codes, with no escape hatch for future or implementation-specific codes.
+
 ## Evidence From Implementations
 
 Every major client and server implements the `UNKNOWN` fallback, demonstrating this is a real

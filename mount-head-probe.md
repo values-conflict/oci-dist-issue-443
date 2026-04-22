@@ -31,6 +31,10 @@ The current spec ([§Mounting a blob from another repository](https://github.com
 
 But it does not tell the client *how* to determine which scenario it is facing.
 
+## Related PRs
+
+- [#275](https://github.com/opencontainers/distribution-spec/pull/275) — "Allow for automatic content discovery for cross-mounting blobs" (merged): added the *registry-side* behavior of automatically discovering and mounting blobs when the `from` parameter is provided, even without an exact match. This is a different angle from our issue, which is about the *client-side* HEAD probe to distinguish "registry doesn't support mounts" from "blob doesn't exist in source repo."
+
 ## Evidence From Implementations
 
 ### Clients using HEAD to probe before or after mount

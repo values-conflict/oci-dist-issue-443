@@ -14,6 +14,10 @@ conformance-relevant protocol behavior was deleted and never restored.
 
 The current `spec.md` is 921 lines. The pre-reorganization `spec.md` was 4,603 lines.
 
+## Context
+
+This directory is a response to [issue #443](https://github.com/opencontainers/distribution-spec/issues/443) ("Historical curiosity: Why did we delete half the spec, again?") and [issue #446](https://github.com/opencontainers/distribution-spec/issues/446) ("spec is missing details"), both of which identify the same gap without cataloguing it in detail.
+
 ## Scope
 
 Only findings that require **new normative language** (or an RFC citation not yet present)

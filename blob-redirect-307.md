@@ -33,6 +33,15 @@ storage or CDNs.
 
 The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints)) lists only `200` as success and `404` as failure for end-2 — `307` does not appear at all.
 
+## Related Issues
+
+- [#397](https://github.com/opencontainers/distribution-spec/issues/397) (open): "Pulling a blob doesn't specify 307 as a valid response status code" — direct match; the issue that PR #398 was opened to fix.
+- [#299](https://github.com/opencontainers/distribution-spec/issues/299) (open): "Support pull/push redirect" — same problem raised independently.
+
+## Related PRs
+
+- [#398](https://github.com/opencontainers/distribution-spec/pull/398) — "Add 307 as valid response for pulling blobs" (closed, **not merged**): directly attempted this fix; closed without explanation.
+
 ## Evidence From Implementations
 
 ### Servers emitting 307

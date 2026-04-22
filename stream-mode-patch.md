@@ -38,6 +38,15 @@ Stream mode is the dominant implementation strategy for clients that know the fu
 advance and want to avoid the chunked protocol overhead. It is simpler to implement and is
 what most clients actually do when pushing small-to-medium blobs.
 
+## Related Issues
+
+- [#443](https://github.com/opencontainers/distribution-spec/issues/443) (open): @sudo-bmitch [comments](https://github.com/opencontainers/distribution-spec/issues/443#issuecomment-1645950937): "We also define a chunked upload, but not the streaming upload for blobs."
+- [#303](https://github.com/opencontainers/distribution-spec/issues/303) (open): "Streamed Blob Upload not defined by spec" — direct match; notes the same three-type reality (monolithic, chunked, streamed) and points to the conformance test for streamed upload that has no spec backing.
+
+## Related PRs
+
+- [#404](https://github.com/opencontainers/distribution-spec/pull/404) — "Allow Content-Length to be omitted when pushing on patch requests" (**open**): directly related; proposes making `Content-Length` optional on `PATCH`, which is a prerequisite for stream-mode uploads where the total size is not always known upfront.
+
 ## Evidence From Implementations
 
 - **distribution** — [`internal/client/blob_writer.go#L40-L50`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L40-L50)

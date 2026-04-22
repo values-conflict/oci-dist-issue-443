@@ -56,6 +56,18 @@ This creates two problems:
    for a freshly-initiated upload, leaving clients unable to distinguish "0 bytes received"
    from "offset unknown".
 
+## Related Issues
+
+- [#213](https://github.com/opencontainers/distribution-spec/issues/213) (open): "Range Header Clarifications for Resumable Uploads and Partial Downloads" — directly about the Range/Content-Range semantics during chunked upload, including the `0-<offset>` vs `<start>-<end>` confusion.
+- [#586](https://github.com/opencontainers/distribution-spec/issues/586) (open): "`Content-Range` and `Range` syntax expected by this spec deviates from RFC 7233" — directly about the missing `bytes=` prefix.
+- [#580](https://github.com/opencontainers/distribution-spec/issues/580) (closed): "Range header in the chunked response needs clarification" — spawned PR #581.
+- [#577](https://github.com/opencontainers/distribution-spec/issues/577) (closed): "Unclear (or incorrect) 'Range' in response header" — related discussion.
+
+## Related PRs
+
+- [#581](https://github.com/opencontainers/distribution-spec/pull/581) — "Clarify the Range header on a chunked push response" (merged): clarified that `<end-of-range>` is the offset of the last byte of the **entire blob**, not the last chunk. This is now in the current spec. It does **not** address the `bytes=` prefix question or the initial-state `0-0` semantics.
+- [#203](https://github.com/opencontainers/distribution-spec/pull/203) — "fixed to use 'bytes' unit for Content-Range to spec/test" (closed, **not merged**): directly attempted to require the `bytes=` prefix per RFC 7233; closed without merging.
+
 ## Evidence From Implementations
 
 The implementations show the **bare** `0-N` format (no `bytes=` prefix) is the de-facto

@@ -51,6 +51,10 @@ But it does not specify:
 Similarly for `DIGEST_INVALID` — the `detail.digest` field is documented in the original
 but absent from the current spec.
 
+## Related Issues
+
+- [#413](https://github.com/opencontainers/distribution-spec/issues/413) (open): "Clarify multiple multiple-error semantics" — broader question about how clients should interpret multiple error codes in a single response, which also touches the `detail` field structure.
+
 ## Evidence From Implementations
 
 - **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)

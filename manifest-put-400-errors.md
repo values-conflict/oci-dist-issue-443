@@ -30,6 +30,15 @@ the error body — but the endpoint table implies 400 should not happen at all.
 The original `spec_before.md` and `detail.md` both listed 400 as a defined failure code for
 PUT manifest with the specific error codes above.
 
+## Related Issues
+
+- [#413](https://github.com/opencontainers/distribution-spec/issues/413) (open): "Clarify multiple multiple-error semantics" — overlaps; asks which error codes are valid per endpoint.
+- [#418](https://github.com/opencontainers/distribution-spec/issues/418) (open): "Error code requirement seems too strict" — the strict MUST list makes it unclear what code to return for validation failures.
+
+## Related PRs
+
+- [#555](https://github.com/opencontainers/distribution-spec/pull/555) — "Align endpoint status with rest of spec" (merged): aligned endpoint table for several endpoints but did **not** add `400` to the PUT manifest rows (end-7a, end-7b).
+
 ## Evidence From Implementations
 
 - **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
