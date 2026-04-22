@@ -1,0 +1,103 @@
+# Missing: Per-Endpoint Enumerated Error Codes
+
+**Priority:** Important  
+**Affects:** All endpoints  
+**Current spec location:** [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints)
+
+## What Was Lost
+
+The deleted `detail.md` documented, for every single endpoint, the exact set of error codes
+that MAY be returned for each failure HTTP status. This was the most detailed part of the
+original specification and totalled over 3,000 lines. While the level of detail in `detail.md`
+may have been excessive for the main spec, the *endpoint table* in the original spec listed
+failure codes inline, and the spec prose described the 400-level error codes per endpoint.
+
+The current [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints) table lists only a simplified failure code set
+(e.g., `404`, `400`/`405`) with no information about *which* error code in the JSON body
+corresponds to which failure condition.
+
+### Key examples of lost per-endpoint error code mappings
+
+**`PUT /v2/<name>/manifests/<reference>` (end-7)**:
+The original listed these 400-class error codes for a PUT manifest:
+- `NAME_INVALID` — invalid repository name
+- `TAG_INVALID` — manifest tag did not match URI tag  
+- `MANIFEST_INVALID` — manifest failed validation
+- `MANIFEST_UNVERIFIED` — manifest failed signature verification
+- `BLOB_UNKNOWN` — manifest references an unknown blob
+
+The current endpoint table shows only `404` and `413` as failure codes — all 400-class
+validation errors are absent.
+
+**`GET /v2/<name>/blobs/<digest>` (end-2)**:
+Original 400-class codes: `NAME_INVALID`, `DIGEST_INVALID`.
+
+**`POST /v2/<name>/blobs/uploads/` (end-4a)**:
+Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`.
+
+**`PATCH /v2/<name>/blobs/uploads/<reference>` (end-5)**:
+Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`,
+`BLOB_UPLOAD_UNKNOWN`.
+
+**`PUT /v2/<name>/blobs/uploads/<reference>` (end-6)**:
+Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`,
+`BLOB_UPLOAD_UNKNOWN`, `SIZE_INVALID`.
+
+## Evidence From Implementations
+
+### Servers that return specific 400-class error codes with bodies
+
+- **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
+  The entire file is a per-endpoint mapping of error codes to HTTP status codes.
+
+- **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
+  Defines `ErrInfoBlobUploadUnknown`, `ErrInfoDigestInvalid`, `ErrInfoNameInvalid`, etc. as
+  distinct error constructors used in specific endpoint handlers.
+
+- **cue-labs-oci** — [`ociregistry/error.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go)
+  Maps each error type to a specific code and HTTP status, e.g.
+  `ErrBlobUploadUnknown` → `BLOB_UPLOAD_UNKNOWN` → 404,
+  `ErrManifestUnknown` → `MANIFEST_UNKNOWN` → 404.
+
+### Clients that parse specific error codes from responses
+
+- **containerd** — [`core/remotes/docker/errdesc.go`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errdesc.go)
+  Full registry of error descriptors including `BLOB_UNKNOWN`, `BLOB_UPLOAD_UNKNOWN`,
+  `DIGEST_INVALID`, `NAME_INVALID`, `SIZE_INVALID`, `MANIFEST_INVALID`, etc., each with HTTP
+  status code mappings.
+
+- **google/go-containerregistry** — [`pkg/v1/remote/transport/error.go`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go)
+  Parses `TOOMANYREQUESTS`, `UNAUTHORIZED`, `DENIED`, `BLOB_UNKNOWN`, `MANIFEST_UNKNOWN`,
+  and `UNKNOWN` from response bodies.
+
+## Proposed Fix
+
+### Option A: Extend the endpoint table in [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints)
+
+Add an "Error Codes" column listing the JSON body error codes that correspond to each failure
+HTTP status. Example for end-7a:
+
+| ID    | Method | API Endpoint                               | Success     | Failure HTTP | Error Codes (body) |
+|-------|--------|--------------------------------------------|-------------|-------------|---------------------|
+| end-7a | `PUT` | `/v2/<name>/manifests/<reference>`         | `201`       | `400`       | `NAME_INVALID`, `MANIFEST_INVALID`, `MANIFEST_BLOB_UNKNOWN` |
+|       |        |                                            |             | `413`       | *(no body required)* |
+|       |        |                                            |             | `404`       | `NAME_UNKNOWN` |
+
+### Option B: Add per-endpoint error code tables in prose
+
+Add after each endpoint's description a table enumerating errors, e.g. for PUT manifest in [§Pushing Manifests](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-manifests):
+
+```markdown
+**Error codes for `PUT /v2/<name>/manifests/<reference>`:**
+
+| HTTP Status | Error Code             | Condition |
+|-------------|------------------------|-----------|
+| 400         | `NAME_INVALID`         | Invalid repository name |
+| 400         | `MANIFEST_INVALID`     | Manifest failed validation |
+| 400         | `MANIFEST_BLOB_UNKNOWN`| Manifest references unknown blob(s) |
+| 404         | `NAME_UNKNOWN`         | Repository not found |
+| 413         | *(none)*               | Manifest exceeds size limit |
+```
+
+Option B is more comprehensive and was the original approach; Option A is more compact and
+more appropriate for a summary specification.

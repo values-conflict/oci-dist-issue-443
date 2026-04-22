@@ -1,0 +1,124 @@
+# Missing/Inconsistent: Range Header Wire Format in Upload State Machine
+
+**Priority:** Critical  
+**Affects:** `PATCH /v2/<name>/blobs/uploads/<reference>` (end-5), `GET /v2/<name>/blobs/uploads/<reference>` (end-13)  
+**Current spec location:** [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)
+
+## What Was Lost / Changed
+
+The original spec defined the `Range` header in upload state machine responses using the
+`bytes=` prefix per RFC 7233:
+
+```http
+202 Accepted
+Location: /v2/<name>/blobs/uploads/<session_id>
+Range: bytes=0-<offset>
+Content-Length: 0
+```
+
+```http
+204 No Content
+Location: /v2/<name>/blobs/uploads/<session_id>
+Range: bytes=0-<offset>
+```
+
+```http
+416 Requested Range Not Satisfiable
+Location: /v2/<name>/blobs/uploads/<session_id>
+Range: 0-<last valid range>
+Content-Length: 0
+```
+
+> — *[§Chunked Upload](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#chunked-upload) (202 response), [§Upload Progress](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#upload-progress) (204 GET response)*
+
+Note the original spec was itself inconsistent: the 416 response omits the `bytes=` prefix
+while the 202 and 204 responses include it. This inconsistency was present in the original and
+has been silently inherited.
+
+The current spec uses the bare `0-<end>` format (without `bytes=`) throughout — for both the
+PATCH 202 response and the GET 204 response:
+
+```
+Range: 0-<end-of-range>
+```
+
+> — *[§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)*
+
+This creates two problems:
+
+1. **Non-RFC format**: The HTTP `Range` header in requests uses `bytes=<start>-<end>` per
+   RFC 9110. The upload progress response is a *response* header, so it is not strictly
+   governed by the same RFC, but the inconsistency creates confusion and interop bugs.
+
+2. **No spec for empty/initial state**: The original spec specified that when an upload has
+   just started and no bytes have been received, the response Range is `bytes=0-0` (meaning
+   zero bytes received). The current spec says nothing about what the `Range` value looks like
+   for a freshly-initiated upload, leaving clients unable to distinguish "0 bytes received"
+   from "offset unknown".
+
+## Evidence From Implementations
+
+The implementations show the **bare** `0-N` format (no `bytes=` prefix) is the de-facto
+standard for *response* Range headers in the upload protocol:
+
+- **distribution** — [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72)
+  ```go
+  fmt.Sscanf(rng, "%d-%d", &start, &end)
+  ```
+  Parses the `Range` response header as bare `start-end` with no `bytes=` prefix.
+
+- **distribution** — [`internal/client/blob_writer_test.go#L48`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer_test.go#L48)
+  ```go
+  "Range": {"0-63"},
+  ```
+  Test fixtures assert the bare `0-63` format throughout (also lines 245, 260, 336).
+
+- **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
+  ```go
+  resp.Header().Set("Range", ocirequest.RangeString(0, w.Size()))
+  ```
+
+- **cue-labs-oci** — [`ociregistry/internal/ocirequest/request.go#L428-L432`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/request.go#L428-L432)
+  `RangeString` formats the header as `start-end` (bare, no `bytes=`).
+
+- **cue-labs-oci** (conformance tests) — [`ociregistry/ociserver/registry_test.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/registry_test.go)
+  Test headers assert `"Range": "0-0"` for a fresh upload.
+
+## Proposed Fix
+
+### 1. Explicitly define the bare `start-end` format as the spec format for upload Range responses
+
+Add a note after the chunk-accepted response block in [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks):
+
+---
+
+> **Note on Range header format in upload responses**: The `Range` header returned by the
+> registry in upload responses (`202 Accepted`, `204 No Content`, and `416` responses) uses
+> the bare `<start>-<end>` format (e.g., `0-1023`) rather than the `bytes=<start>-<end>`
+> format used in HTTP range *request* headers (RFC 9110). Both ends are inclusive.
+
+---
+
+### 2. Define the initial Range value (zero bytes received)
+
+Add to the description of the 202 PATCH response in [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks):
+
+---
+
+When no bytes have yet been received (i.e., immediately after the initiating `POST`), the
+`Range` value MUST be `0-0`, indicating that the next byte to be sent is byte 0.
+After the first successful chunk upload, the `<end-of-range>` value is the zero-based index
+of the last byte received.
+
+---
+
+### 3. Full proposed addition in [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)
+
+Insert after the paragraph describing the `<end-of-range>` value:
+
+```markdown
+> **Note**: The `Range` header in upload progress responses uses the bare `<start>-<end>`
+> format (for example, `Range: 0-1023`), not the `bytes=<start>-<end>` format defined by
+> RFC 9110 for range requests. Both ends are inclusive. Immediately after initiating an
+> upload session with no data transferred, the registry MUST return `Range: 0-0`.
+```
