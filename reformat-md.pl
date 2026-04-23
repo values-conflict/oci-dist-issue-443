@@ -57,6 +57,9 @@ sub is_prose_line {
     return 0 if $line =~ /^(```|~~~)/;
     return 0 if $line =~ /^([-*+]\s|\d+\.\s)/;
     return 0 if $line =~ /^\*\*[^*]+:\*\*/;
+    return 0 if $line =~ /^\[[^\]]+\]:/;    # reference link definition
+    return 0 if $line =~ /^[-*_]{3,}\s*$/;  # horizontal rule
+    return 0 if $line =~ /^!\[/;            # image / badge line
     return 1;
 }
 
@@ -105,6 +108,7 @@ sub split_into_sentences {
     my $bracket_depth = 0;
     my $in_link_url = 0;
     my $paren_depth = 0;
+    my $star_depth = 0;   # running count of * chars seen; odd = inside an emphasis span
 
     while ($i < $n) {
         my $c = $chars[$i];
@@ -140,7 +144,10 @@ sub split_into_sentences {
             $i++; next;
         }
 
+        if ($c eq '*') { $star_depth++; $i++; next; }
+
         if ($c eq '.' || $c eq '!' || $c eq '?') {
+            if ($star_depth % 2 == 1) { $i++; next; }   # inside *...* span; don't split
             my $j = $i + 1;
             while ($j < $n && $chars[$j] =~ /["')\]]/) { $j++; }
             my $at_end        = ($j >= $n);
@@ -160,7 +167,18 @@ sub split_into_sentences {
                 my $token_for_abbrev = $prev_token;
                 $token_for_abbrev =~ s/^["'(\[]+//;
                 my $body = $prev_token; chop $body;
-                if ($body =~ /\./) { $i = $j; next; }
+                if ($body =~ /\./) {
+                    # Only treat as non-terminal if the dot is in plain text
+                    # (e.g. a version number).  Dots inside inline markdown
+                    # syntax — code spans, link labels/targets, autolinks —
+                    # do not count.
+                    my $plain = $body;
+                    $plain =~ s/`[^`]*`//g;      # strip inline code
+                    $plain =~ s/\[[^\]]*\]//g;   # strip [...] link labels / targets
+                    $plain =~ s/<[^>]*>//g;       # strip <...> autolinks / HTML
+                    $plain =~ s/\([^)]*\)//g;     # strip (...) link parens
+                    if ($plain =~ /\./) { $i = $j; next; }
+                }
                 if (looks_like_abbrev($token_for_abbrev)) { $i = $j; next; }
             }
 
@@ -194,6 +212,17 @@ sub reformat {
     my $fence_min  = 0;
     my $i = 0;
     my $n = scalar @lines;
+
+    # Pass YAML front matter through verbatim (only valid when file starts with '---')
+    if ($i < $n && $lines[$i] =~ /^---\s*$/) {
+        push @out, $lines[$i]; $i++;
+        while ($i < $n) {
+            push @out, $lines[$i];
+            last if $lines[$i] =~ /^---\s*$/;
+            $i++;
+        }
+        $i++;
+    }
 
     OUTER: while ($i < $n) {
         my $line = $lines[$i];
