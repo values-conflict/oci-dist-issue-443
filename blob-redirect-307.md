@@ -37,7 +37,7 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ## Related PRs
 
-- [#607](https://github.com/opencontainers/distribution-spec/pull/607) — "Permit 307 redirects on blob fetch and add RFC references" (**open**): directly addresses this issue; adds 307 to the end-2 success column and prose referencing RFC 9110 (section 15.4).
+- [#607](https://github.com/opencontainers/distribution-spec/pull/607) — "Permit HTTP redirects globally and add RFC references" (**open**): resolves this issue; adds a global redirect rule to §API covering all endpoints, with the "status codes are those after redirects have been followed" framing replacing the need to add 307 to the end-2 table.
 - [#398](https://github.com/opencontainers/distribution-spec/pull/398) — "Add 307 as valid response for pulling blobs" (closed, **not merged**): prior attempt; closed without explanation.
 
 ## Evidence From Implementations
