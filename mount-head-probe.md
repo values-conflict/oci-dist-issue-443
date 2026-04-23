@@ -69,8 +69,7 @@ But it does not tell the client *how* to determine which scenario it is facing.
       ...
       logs.Warn.Printf("retrying without mount: %v", err)
   ```
-  Falls back to upload on mount failure; uses the HEAD result to decide whether to try mount
-  at all.
+  Falls back to upload on mount failure; uses the HEAD result to decide whether to try mount at all.
 
 - **containerd (client)** — [`core/remotes/docker/pusher.go#L577-L585`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/pusher.go#L577-L585)
   `requestWithMountFrom` appends `mount=<digest>&from=<repo>` and handles the 202 fallback.

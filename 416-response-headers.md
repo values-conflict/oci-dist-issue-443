@@ -95,8 +95,7 @@ Directing clients to "issue a GET request to retrieve the current valid offset" 
   The ggcr server returns 416 for an out-of-order or malformed `Content-Range`, but does **not** set `Location`, `Range`, or `Content-Length: 0` on the 416 response — the client has no in-band recovery information without a separate `GET`. This is evidence that the missing 416 headers are a real gap even in recent implementations.
 
 - **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
-  Sets `Range` header in upload responses; the logic for 416 vs 202 uses the same
-  `ocirequest.RangeString` helper.
+  Sets `Range` header in upload responses; the logic for 416 vs 202 uses the same `ocirequest.RangeString` helper.
 
 ## Proposed Fix
 

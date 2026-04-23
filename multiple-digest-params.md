@@ -36,19 +36,16 @@ This is one of the few cases where the original spec text was ahead of distribut
 ### Other implementations
 
 - **cue-labs-oci (server)** — [`ociregistry/internal/ocirequest/create.go#L56-L68`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/create.go#L56-L68)
-  Single `digest=` parameter in URL construction today, but the request parsing path reads
-  only the first `digest` value, making multi-digest a silent extension.
+  Single `digest=` parameter in URL construction today, but the request parsing path reads only the first `digest` value, making multi-digest a silent extension.
 
 - **olareg (server)** — [`blob.go#L194-L206`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L194-L206)
   ```go
   r.URL.Query().Get("digest-algorithm")  // EXPERIMENTAL, see OCI PR #543
   ```
-  Already experimenting with an explicit `digest-algorithm` parameter to enable
-  non-sha256 verification — directly motivated by the same multi-algorithm use case.
+  Already experimenting with an explicit `digest-algorithm` parameter to enable non-sha256 verification — directly motivated by the same multi-algorithm use case.
 
 - **regclient (client)** — [`scheme/reg/blob.go#L370-L374`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/scheme/reg/blob.go#L370-L374), [#L581-L585](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/scheme/reg/blob.go#L581-L585)
-  Constructs PUT URLs with `digest=<digest>`; would naturally extend to multiple parameters
-  if the spec permitted it.
+  Constructs PUT URLs with `digest=<digest>`; would naturally extend to multiple parameters if the spec permitted it.
 
 ## Proposed Fix
 

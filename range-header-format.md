@@ -43,15 +43,11 @@ Range: 0-<end-of-range>
 
 This creates two problems:
 
-1. **Non-RFC format**: The HTTP `Range` header in requests uses `bytes=<start>-<end>` per
-   RFC 9110. The upload progress response is a *response* header, so it is not strictly
-   governed by the same RFC, but the inconsistency creates confusion and interop bugs.
+1. **Non-RFC format**: The HTTP `Range` header in requests uses `bytes=<start>-<end>` per RFC 9110.
+   The upload progress response is a *response* header, so it is not strictly governed by the same RFC, but the inconsistency creates confusion and interop bugs.
 
-2. **No spec for empty/initial state**: The original spec specified that when an upload has
-   just started and no bytes have been received, the response Range is `bytes=0-0` (meaning
-   zero bytes received). The current spec says nothing about what the `Range` value looks like
-   for a freshly-initiated upload, leaving clients unable to distinguish "0 bytes received"
-   from "offset unknown".
+2. **No spec for empty/initial state**: The original spec specified that when an upload has just started and no bytes have been received, the response Range is `bytes=0-0` (meaning zero bytes received).
+   The current spec says nothing about what the `Range` value looks like for a freshly-initiated upload, leaving clients unable to distinguish "0 bytes received" from "offset unknown".
 
 ## Related Issues
 

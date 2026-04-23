@@ -65,24 +65,18 @@ Note that in distribution v2.7.1, unknown-blob errors on manifest push returned 
 ### Other implementations
 
 - **olareg (server)** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
-  Defines `ErrInfoBlobUploadUnknown`, `ErrInfoDigestInvalid`, `ErrInfoNameInvalid`, etc. as
-  distinct error constructors used in specific endpoint handlers.
+  Defines `ErrInfoBlobUploadUnknown`, `ErrInfoDigestInvalid`, `ErrInfoNameInvalid`, etc. as distinct error constructors used in specific endpoint handlers.
 
 - **cue-labs-oci (shared)** — [`ociregistry/error.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go)
-  Maps each error type to a specific code and HTTP status, e.g.
-  `ErrBlobUploadUnknown` → `BLOB_UPLOAD_UNKNOWN` → 404,
-  `ErrManifestUnknown` → `MANIFEST_UNKNOWN` → 404.
+  Maps each error type to a specific code and HTTP status, e.g. `ErrBlobUploadUnknown` → `BLOB_UPLOAD_UNKNOWN` → 404, `ErrManifestUnknown` → `MANIFEST_UNKNOWN` → 404.
 
 ### Clients that parse specific error codes from responses
 
 - **containerd (client)** — [`core/remotes/docker/errdesc.go`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errdesc.go)
-  Full registry of error descriptors including `BLOB_UNKNOWN`, `BLOB_UPLOAD_UNKNOWN`,
-  `DIGEST_INVALID`, `NAME_INVALID`, `SIZE_INVALID`, `MANIFEST_INVALID`, etc., each with HTTP
-  status code mappings.
+  Full registry of error descriptors including `BLOB_UNKNOWN`, `BLOB_UPLOAD_UNKNOWN`, `DIGEST_INVALID`, `NAME_INVALID`, `SIZE_INVALID`, `MANIFEST_INVALID`, etc., each with HTTP status code mappings.
 
 - **google/go-containerregistry (client)** — [`pkg/v1/remote/transport/error.go`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go)
-  Parses `TOOMANYREQUESTS`, `UNAUTHORIZED`, `DENIED`, `BLOB_UNKNOWN`, `MANIFEST_UNKNOWN`,
-  and `UNKNOWN` from response bodies.
+  Parses `TOOMANYREQUESTS`, `UNAUTHORIZED`, `DENIED`, `BLOB_UNKNOWN`, `MANIFEST_UNKNOWN`, and `UNKNOWN` from response bodies.
 
 ## Proposed Fix
 

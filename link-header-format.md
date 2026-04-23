@@ -61,12 +61,10 @@ Despite RFC 5988 being referenced, implementations have gotten the format wrong:
   Uses `<%s>; rel=next` — correctly.
 
 - **olareg** (server, test) — [`olareg_test.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg_test.go)
-  Validates with ``regexp.MustCompile(`^<([^>]+)>; rel=next$`)`` — suggests the format has
-  been wrong before and the test was written defensively.
+  Validates with ``regexp.MustCompile(`^<([^>]+)>; rel=next$`)`` — suggests the format has been wrong before and the test was written defensively.
 
 - **regclient** (client) — [`internal/httplink/httplink.go#L1`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/httplink/httplink.go#L1)
-  Ships a dedicated RFC 5988 parser — suggesting that naive string parsing of the header
-  without a proper parser is a real failure mode.
+  Ships a dedicated RFC 5988 parser — suggesting that naive string parsing of the header without a proper parser is a real failure mode.
 
 - **cue-labs-oci** (server) — [`ociregistry/ociserver/lister.go#L150`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/lister.go#L150)
   Comment notes "RFC 5988" on the Link-building function.

@@ -69,8 +69,7 @@ A server that returns a false `Docker-Content-Digest` (e.g., due to a bug or a M
 ### Other implementations
 
 - **containerd (client)** — [`core/remotes/docker/resolver.go#L689-L692`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L689-L692)
-  Accepts 206 and reads `Content-Range` for blob verification, but uses the locally-known
-  digest from the manifest as the ground truth, not the server header.
+  Accepts 206 and reads `Content-Range` for blob verification, but uses the locally-known digest from the manifest as the ground truth, not the server header.
 
 - **cue-labs-oci (client)** — [`ociregistry/ociclient/client.go#L148-L159`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociclient/client.go#L148-L159)
   Validates the `Content-Range` on 206 response against the requested range.

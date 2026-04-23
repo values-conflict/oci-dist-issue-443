@@ -72,8 +72,7 @@ Similarly for `DIGEST_INVALID` — the `detail.digest` field is documented in th
 ### Other implementations
 
 - **olareg (server)** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
-  Constructs error responses with the `BLOB_UNKNOWN` code and passes the digest as the detail
-  string.
+  Constructs error responses with the `BLOB_UNKNOWN` code and passes the digest as the detail string.
 
 - **cue-labs-oci (shared)** — [`ociregistry/error.go#L321`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L321)
   ```go
