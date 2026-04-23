@@ -79,30 +79,16 @@ A server that returns a false `Docker-Content-Digest` (e.g., due to a bug or a M
 
 ### Amend [§Pulling blobs](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pulling-blobs)
 
-After the existing `Docker-Content-Digest` paragraph, add:
+Append to the existing `Docker-Content-Digest` paragraph:
 
 ```markdown
-When the client fetches a blob by digest, it MUST verify that the response body matches the
-digest specified in the request URL.
-The `Docker-Content-Digest` response header, if present, SHOULD NOT be trusted in place of
-this local verification: the client SHOULD compute the digest of the received content and
-compare it against the request digest directly.
-
-If the `Docker-Content-Digest` header value uses a different hashing algorithm than the
-request digest, the two values are in different digest _domains_ and cannot be directly
-compared.
-In such a case, the client MUST still verify the content against the digest used in the
-request and MAY additionally verify against the server-provided digest as an extra check.
+When fetching by digest, the client MUST verify the response body against the request digest directly and SHOULD NOT substitute the `Docker-Content-Digest` header for this verification.
 ```
 
 ### Amend [§Pulling manifests](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pulling-manifests)
 
-After the existing `Docker-Content-Digest` note, add:
+Append to the existing `Docker-Content-Digest` paragraph:
 
 ```markdown
-When the `<reference>` in a manifest request is a digest, the client MUST verify the
-downloaded manifest body matches that digest.
-The client SHOULD NOT substitute the server-returned `Docker-Content-Digest` value for its
-own verification: the `Docker-Content-Digest` header SHOULD NOT be trusted in preference
-to locally-computed verification.
+When the `<reference>` is a digest, the client MUST verify the downloaded manifest body against that digest directly and SHOULD NOT substitute the `Docker-Content-Digest` header for this verification.
 ```

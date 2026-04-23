@@ -65,26 +65,16 @@ The current spec describes only the `416` case in [§Pushing a blob in chunks](h
 
 ### Insertion point in [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)
 
-Add after the 416 paragraph:
+Append after the 416 paragraph:
 
 ```markdown
-Any `4xx` response other than `416 Requested Range Not Satisfiable` indicates that the upload
-session has failed and MUST NOT be resumed.
-The client SHOULD issue a `DELETE` request to the upload `<location>` to release server
-resources (see [Cancel a blob upload](#cancel-a-blob-upload)), and then restart the upload
-from the beginning.
+Any other `4xx` response indicates the upload session has failed and MUST NOT be resumed.
 ```
 
 ### Insertion point in [§Cancel a blob upload](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#cancel-a-blob-upload)
 
-Add after the timeout sentence:
+Append after the timeout sentence:
 
 ```markdown
-Upload sessions do not persist indefinitely.
-If a registry receives a request for an upload session that has expired or is otherwise
-unknown, it MUST respond with `404 Not Found` and SHOULD include a `BLOB_UPLOAD_UNKNOWN`
-error in the response body.
-Upon receiving such a `404 Not Found` response for an upload session URL, the client MUST
-treat the upload as failed and restart the upload process from the beginning (i.e., a new
-`POST` to `/v2/<name>/blobs/uploads/` is required).
+A `404 Not Found` response to any request on an upload session URL indicates the session has expired; the client MUST begin a new upload with a fresh `POST` to `/v2/<name>/blobs/uploads/`.
 ```

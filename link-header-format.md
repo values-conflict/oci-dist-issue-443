@@ -80,23 +80,10 @@ Despite RFC 5988 being referenced, implementations have gotten the format wrong:
 ## Proposed Fix
 
 No new normative requirements — RFC 5988 already covers them.
-Add to [§Listing Tags](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-tags):
+Add two sentences to [§Listing Tags](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-tags) after the existing `Link` header sentence:
 
 ```markdown
-Per [RFC 5988](https://www.rfc-editor.org/rfc/rfc5988), the URL in the `Link` header MUST
-be enclosed in angle brackets. For example:
-
-```
-Link: </v2/<name>/tags/list?n=20&last=tagname>; rel="next"
-```
-
-When no `Link` header is present in a response, the client SHOULD assume it has received
-the complete result set.
-
-For example, given a repository with tags `v1`, `v2`, `v3`, `v4` and a request for `n=2`:
-- Response 1: tags `["v1","v2"]`, `Link: </v2/<name>/tags/list?n=2&last=v2>; rel="next"`
-- Response 2 (following the Link): tags `["v3","v4"]`, no `Link` header — end of list.
-
-Clients SHOULD use the URL from the `Link` header verbatim rather than constructing it
-manually, as the registry MAY include opaque pagination state in query parameters.
+Per [RFC 5988](https://www.rfc-editor.org/rfc/rfc5988), the URL in the `Link` header MUST be enclosed in angle brackets (e.g., `Link: </v2/<name>/tags/list?n=20&last=tagname>; rel="next"`).
+When no `Link` header is present in a response, the client SHOULD assume it has received the complete result set.
+Clients SHOULD use the URL from the `Link` header verbatim rather than constructing it manually, as the registry MAY include opaque pagination state in the URL.
 ```

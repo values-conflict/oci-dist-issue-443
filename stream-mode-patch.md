@@ -113,30 +113,10 @@ It is simpler to implement and is what most clients actually do when pushing sma
 
 ## Proposed Fix
 
-### Add stream mode to [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)
+### Amend [§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)
 
-After the chunked PATCH description, add:
+Append to the paragraph describing the `PATCH` request format:
 
 ```markdown
----
-
-##### Stream Upload
-
-As an alternative to chunked uploads, a client MAY stream the entire blob in a single `PATCH`
-request by omitting the `Content-Range` header:
-
-URL path: `<location>` <sup>[end-5](#endpoints)</sup>
-```
-Content-Type: application/octet-stream
-Content-Length: <total-length>
-```
-```
-<full blob byte stream>
-```
-
-A registry that receives a `PATCH` without a `Content-Range` header SHOULD treat the body as
-starting at byte offset 0.
-The response on success MUST be `202 Accepted` with `Location` and `Range` headers as
-described above.
-The session MUST still be closed with a subsequent `PUT` request.
+A `PATCH` request MAY omit the `Content-Range` header, in which case the registry SHOULD treat the body as starting at byte offset 0 and append it to any previously uploaded data.
 ```
