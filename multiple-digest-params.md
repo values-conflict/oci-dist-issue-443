@@ -31,6 +31,12 @@ it prefers or supports, without requiring a second round-trip.
 
 ## Evidence From Implementations
 
+### distribution v2.7 (canonical)
+
+The v2.7.1 PUT blob upload endpoint accepted a single `digest` query parameter only — multiple `digest` parameters were not implemented. The original spec language permitting multiple digests was therefore aspirational, describing intended future behavior rather than current canonical behavior. This is one of the few cases where the original spec text was ahead of distribution.
+
+### Other implementations
+
 - **cue-labs-oci** — [`ociregistry/internal/ocirequest/create.go#L56-L68`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/create.go#L56-L68)
   Single `digest=` parameter in URL construction today, but the request parsing path reads
   only the first `digest` value, making multi-digest a silent extension.

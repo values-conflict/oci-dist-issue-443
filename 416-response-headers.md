@@ -54,17 +54,22 @@ having the 416 response itself carry the recovery information — it adds a roun
 
 ## Evidence From Implementations
 
-- **distribution** — [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72)
-  Parses the `Range` header directly from the 416 response (as well as 202 responses) using
-  `fmt.Sscanf(rng, "%d-%d", &start, &end)` to determine the resume offset.
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (server)** — [`registry/handlers/blobupload.go#L319-L323`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/blobupload.go#L319-L323)
+  ```go
+  w.Header().Set("Location", uploadURL)
+  w.Header().Set("Content-Length", "0")
+  w.Header().Set("Range", fmt.Sprintf("0-%d", endRange))
+  ```
+  The `blobUploadResponse` helper — used for all success (202) responses — sets `Location`, `Content-Length: 0`, and bare `Range` since v2.7.1. Note: v2.7.1 did not emit 416 from PATCH (chunked upload was unimplemented; see [stream-mode-patch.md](stream-mode-patch.md)), so 416 recovery headers were not exercised by the canonical server at the time of the spec reorganization.
+  > Current behavior: [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72) — the client parses `Range` from both 202 and 416 responses using `fmt.Sscanf(rng, "%d-%d", ...)`, expecting all three headers to be present. The current server still documents `Location`, `Range`, and `Content-Length` as required 416 response headers in [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go).
+
+### Other implementations
 
 - **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
   Sets `Range` header in upload responses; the logic for 416 vs 202 uses the same
   `ocirequest.RangeString` helper.
-
-- **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
-  Documents `Location`, `Range`, and `Content-Length` headers for 416 responses in the
-  blob upload descriptors.
 
 ## Proposed Fix
 

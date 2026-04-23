@@ -29,18 +29,30 @@ that ambiguity.
 
 ## Evidence From Implementations
 
-- **distribution** — [`internal/client/blob_writer.go#L33-L37`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L33-L37)
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (client)** — [`registry/client/blob_writer.go#L31-L34`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/blob_writer.go#L31-L34)
   ```go
-  if resp.StatusCode == http.StatusNotFound {
-      return distribution.ErrBlobUploadUnknown
+  func (hbu *httpBlobUpload) handleErrorResponse(resp *http.Response) error {
+      if resp.StatusCode == http.StatusNotFound {
+          return distribution.ErrBlobUploadUnknown
+      }
+  ```
+  The canonical client has mapped 404 on an upload URL to `ErrBlobUploadUnknown` (restart required) since v2.7.1.
+  > Current behavior: [`internal/client/blob_writer.go#L33-L37`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L33-L37) — identical.
+
+- **distribution v2.7.1 (server)** — [`registry/handlers/blobupload.go#L63-L75`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/blobupload.go#L63-L75)
+  ```go
+  if err == distribution.ErrBlobUploadUnknown {
+      return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+          buh.Errors = append(buh.Errors, v2.ErrorCodeBlobUploadUnknown.WithDetail(err))
+      })
   }
   ```
-  Explicitly maps 404 on an upload URL to `ErrBlobUploadUnknown`, a signal to restart.
+  When session lookup fails with `ErrBlobUploadUnknown`, the server returns `BLOB_UPLOAD_UNKNOWN` — the signal the client above is waiting for.
+  > Current behavior: unchanged.
 
-- **distribution** (server) — [`registry/api/v2/descriptors.go#L1210`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L1210), [#L1285](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L1285), [#L1367](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L1367)
-  ```
-  "The upload is unknown to the registry. The upload must be restarted."
-  ```
+### Other implementations
 
 - **olareg** — [`blob.go#L123`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L123), [#L154](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L154), [#L388](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L388), [#L468](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L468)
   ```go

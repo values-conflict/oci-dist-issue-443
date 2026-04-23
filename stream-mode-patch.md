@@ -49,27 +49,33 @@ what most clients actually do when pushing small-to-medium blobs.
 
 ## Evidence From Implementations
 
-- **distribution** — [`internal/client/blob_writer.go#L40-L50`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L40-L50)
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (client)** — [`registry/client/blob_writer.go#L38-L51`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/blob_writer.go#L38-L51)
   ```go
   func (hbu *httpBlobUpload) ReadFrom(r io.Reader) (n int64, err error) {
+      req, err := http.NewRequest("PATCH", hbu.location, ioutil.NopCloser(r))
       ...
-      req.Header.Set("Content-Type", "application/octet-stream")
-      // Note: no Content-Range header set here
+      // No Content-Type, no Content-Range set
   ```
-  `ReadFrom` issues a PATCH with only `Content-Type` and no `Content-Range`.
+  `ReadFrom` — stream mode — was the **primary client interface** for blob upload in v2.7.1, issuing a PATCH with neither `Content-Range` nor `Content-Type`.
+  > Current behavior: [`internal/client/blob_writer.go#L40-L50`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L40-L50) — unchanged; `ReadFrom` still issues a Content-Range-free PATCH, now with `Content-Type: application/octet-stream` added.
 
-- **distribution** — [`internal/client/blob_writer.go#L76-L84`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L76-L84)
+- **distribution v2.7.1 (server)** — [`registry/handlers/blobupload.go#L167-L193`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/blobupload.go#L167-L193)
   ```go
-  req.Header.Set("Content-Range", fmt.Sprintf("%d-%d", hbu.offset, ...))
-  req.Header.Set("Content-Type", "application/octet-stream")
+  func (buh *blobUploadHandler) PatchBlobData(w http.ResponseWriter, r *http.Request) {
+      ...
+      // TODO(dmcgowan): support Content-Range header to seek and write range
+      if err := copyFullPayload(buh, w, r, buh.Upload, -1, "blob PATCH"); err != nil {
   ```
-  `Write` (chunked mode) *does* set `Content-Range`. Two modes coexist in the same file.
+  The v2.7.1 server **only** implemented stream mode. The `// TODO` at line 180 shows `Content-Range` (chunked) support was explicitly deferred. The canonical registry did not support chunked PATCH at all when the spec was reorganized.
+  > Current behavior: the `TODO` is resolved; the current server handles both modes. See [`internal/client/blob_writer.go#L76-L84`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L76-L84) for the client's later-added `Write` (chunked) path.
+
+### Other implementations
 
 - **google/go-containerregistry** — [`pkg/v1/remote/write.go#L257-L288`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L257-L288)
   ```go
-  func (w *writer) streamBlob(ctx context.Context, layer v1.Layer,
-      streamLocation string) (commitLocation string, rerr error) {
-      ...
+  func (w *writer) streamBlob(...) (commitLocation string, rerr error) {
       req, err := http.NewRequest(http.MethodPatch, streamLocation, blob)
   ```
   `streamBlob` issues a single PATCH of the entire blob body with no `Content-Range`.
@@ -80,8 +86,7 @@ what most clients actually do when pushing small-to-medium blobs.
   // but the conformance tests do not actually follow that as of the time of writing.
   // Allow the missing header to result in start=0, meaning we assume it's the first chunk.
   ```
-  The server explicitly documents this as a known spec/conformance-test inconsistency and
-  accepts stream-mode PATCHes to avoid breaking clients.
+  Explicitly documents this as a known spec/conformance-test inconsistency and accepts stream-mode PATCHes to avoid breaking clients.
 
 ## Proposed Fix
 

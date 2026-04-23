@@ -55,10 +55,13 @@ Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID
 
 ## Evidence From Implementations
 
-### Servers that return specific 400-class error codes with bodies
+### distribution v2.7 (canonical)
 
-- **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
-  The entire file is a per-endpoint mapping of error codes to HTTP status codes.
+- **distribution v2.7.1** — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/v2/descriptors.go)
+  The entire file is a machine-readable per-endpoint mapping of error codes to HTTP status codes — the source document that `detail.md` was generated from. It covers every endpoint with the exact error codes that can be returned for each HTTP status. The current spec deleted this mapping; the canonical implementation still carries it.
+  > Current behavior: [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go) — unchanged; still a comprehensive per-endpoint error code table, only the spec no longer reflects it.
+
+### Other implementations
 
 - **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
   Defines `ErrInfoBlobUploadUnknown`, `ErrInfoDigestInvalid`, `ErrInfoNameInvalid`, etc. as

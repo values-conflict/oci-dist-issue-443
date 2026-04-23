@@ -29,8 +29,27 @@ a stability guarantee that is also now absent.
 
 ## Evidence From Implementations
 
-Every major client and server implements the `UNKNOWN` fallback, demonstrating this is a real
-operational need:
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (error code definition)** — [`registry/api/errcode/register.go#L17-L22`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/errcode/register.go#L17-L22)
+  ```go
+  // ErrorCodeUnknown is a generic error that can be used as a last
+  // resort if there is not a normal error code that can describe the situation.
+  ErrorCodeUnknown = Register("errcode", ErrorDescriptor{
+      Value:   "UNKNOWN",
+  ```
+  `UNKNOWN` was a first-class registered error code in the canonical implementation since v2.7.1.
+  > Current behavior: [`registry/api/errcode/register.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/errcode/register.go) — unchanged.
+
+- **distribution v2.7.1 (client fallback)** — [`registry/client/errors.go#L58-L62`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/errors.go#L58-L62)
+  ```go
+  default:
+      return errcode.ErrorCodeUnknown.WithMessage(detailsErr.Details)
+  ```
+  When parsing an error response, any unrecognized status code falls back to `ErrorCodeUnknown`. This is the canonical implementation of the forward-compat requirement.
+  > Current behavior: [`internal/client/errors.go#L110`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/errors.go#L110) — identical `return errcode.ErrorCodeUnknown.WithMessage(details)`; behavior unchanged across all versions.
+
+### Other implementations
 
 - **containerd** — [`core/remotes/docker/errdesc.go#L33-L36`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errdesc.go#L33-L36)
   ```go
@@ -45,12 +64,6 @@ operational need:
   return ErrorCodeUnknown.Descriptor()
   ```
 
-- **distribution** — [`internal/client/errors.go#L110`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/errors.go#L110)
-  ```go
-  return errcode.ErrorCodeUnknown.WithMessage(details)
-  ```
-  Explicit fallback: when an error code in a response is not in the known registry, it is
-  mapped to `UNKNOWN`.
 
 - **cue-labs-oci** — [`ociregistry/error.go#L269`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L269)
   ```go

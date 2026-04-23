@@ -41,12 +41,21 @@ PUT manifest with the specific error codes above.
 
 ## Evidence From Implementations
 
-- **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
-  PUT manifest failure responses include `400` with `MANIFEST_INVALID`, `MANIFEST_BLOB_UNKNOWN`,
-  `NAME_INVALID` as defined error codes.
+### distribution v2.7 (canonical)
 
-- **distribution** (server handler) — [`registry/handlers/manifests.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/handlers/manifests.go)
-  Returns 400 for manifest validation errors.
+- **distribution v2.7.1** — [`registry/handlers/manifests.go#L247-L274`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/manifests.go#L247-L274)
+  ```go
+  if err == distribution.ErrBlobUnknown {
+      imh.Errors = append(imh.Errors, v2.ErrorCodeManifestInvalid.WithDetail(err))
+  ...
+  imh.Errors = append(imh.Errors, v2.ErrorCodeTagInvalid.WithDetail(err))
+  ...
+  imh.Errors = append(imh.Errors, v2.ErrorCodeManifestInvalid.WithDetail(err))
+  ```
+  In v2.7.1, a PUT manifest with an unknown blob returned `MANIFEST_INVALID` (not `MANIFEST_BLOB_UNKNOWN`, which was not yet a distinct code). `TAG_INVALID` was also returned for tag mismatches. All of these produce 400 responses — none of which appears in the current endpoint table.
+  > Current behavior: [`registry/handlers/manifests.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/handlers/manifests.go) — returns `MANIFEST_BLOB_UNKNOWN` for missing blobs (split out from `MANIFEST_INVALID` in a later version), and [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go) documents 400 with `MANIFEST_INVALID`, `MANIFEST_BLOB_UNKNOWN`, and `NAME_INVALID` — all still absent from the spec's endpoint table.
+
+### Other implementations
 
 - **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
   Defines `MANIFEST_INVALID` and `MANIFEST_BLOB_UNKNOWN` error constructors that produce

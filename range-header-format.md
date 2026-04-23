@@ -70,20 +70,29 @@ This creates two problems:
 
 ## Evidence From Implementations
 
-The implementations show the **bare** `0-N` format (no `bytes=` prefix) is the de-facto
-standard for *response* Range headers in the upload protocol:
+### distribution v2.7 (canonical)
 
-- **distribution** — [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72)
+- **distribution v2.7.1 (client, stream mode)** — [`registry/client/blob_writer.go#L59-L64`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/blob_writer.go#L59-L64)
   ```go
-  fmt.Sscanf(rng, "%d-%d", &start, &end)
+  rng := resp.Header.Get("Range")
+  var start, end int64
+  if n, err := fmt.Sscanf(rng, "%d-%d", &start, &end); err != nil {
   ```
-  Parses the `Range` response header as bare `start-end` with no `bytes=` prefix.
+  The canonical client has parsed the upload progress `Range` response header as bare `start-end` (no `bytes=` prefix) since v2.7.1.
+  > Current behavior: [`internal/client/blob_writer.go#L64-L72`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L64-L72) — identical `fmt.Sscanf(rng, "%d-%d", ...)` parse.
 
-- **distribution** — [`internal/client/blob_writer_test.go#L48`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer_test.go#L48)
+- **distribution v2.7.1 (client, chunked mode)** — [`registry/client/blob_writer.go#L94-L99`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/blob_writer.go#L94-L99)
+  Same `fmt.Sscanf(rng, "%d-%d", ...)` parse in the `Write` (chunked) path. Both client modes expect the bare format.
+
+- **distribution v2.7.1 (server)** — [`registry/handlers/blobupload.go#L320-L323`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/blobupload.go#L320-L323)
   ```go
-  "Range": {"0-63"},
+  w.Header().Set("Content-Length", "0")
+  w.Header().Set("Range", fmt.Sprintf("0-%d", endRange))
   ```
-  Test fixtures assert the bare `0-63` format throughout (also lines 245, 260, 336).
+  The canonical server has emitted bare `0-N` Range headers since v2.7.1. This is the format the spec text should describe.
+  > Current behavior: identical; current server uses the same `fmt.Sprintf("0-%d", endRange)` pattern.
+
+### Other implementations
 
 - **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
   ```go

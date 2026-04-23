@@ -44,22 +44,23 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ## Evidence From Implementations
 
-### Servers emitting 307
+### distribution v2.7 (canonical)
 
-- **distribution** — [`registry/storage/blobserver.go#L44`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/storage/blobserver.go#L44)
+- **distribution v2.7.1** — [`registry/storage/blobserver.go#L41-L42`](https://github.com/distribution/distribution/blob/v2.7.1/registry/storage/blobserver.go#L41-L42)
   ```go
+  // Redirect to storage URL.
   http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
   ```
-  The blob server unconditionally redirects when the storage driver provides a redirect URL.
+  The canonical registry has redirected blob fetches to storage backends since at least v2.7.1; the redirect path is taken whenever the storage driver provides a URL.
+  > Current behavior: [`registry/storage/blobserver.go#L44`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/storage/blobserver.go#L44) — identical; unchanged across all versions. The current server also documents `StatusCode: http.StatusTemporaryRedirect` as a valid blob fetch response in [`registry/api/v2/descriptors.go#L771`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L771).
+
+### Other implementations
 
 - **cue-labs-oci** — [`ociregistry/ociserver/reader.go#L61`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/reader.go#L61)
   ```go
   http.Redirect(resp, req, locs[0], http.StatusTemporaryRedirect)
   ```
   Redirects when the backend returns a `BlobLocations` URL list.
-
-- **distribution** — [`registry/api/v2/descriptors.go#L771`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L771)
-  Documents `StatusCode: http.StatusTemporaryRedirect` as a valid blob fetch response.
 
 ### Clients handling redirects
 

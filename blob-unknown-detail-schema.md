@@ -57,9 +57,24 @@ but absent from the current spec.
 
 ## Evidence From Implementations
 
-- **distribution** (server) — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go)
-  Describes `BLOB_UNKNOWN` with detail containing the blob digest, and `DIGEST_INVALID` with
-  a detail containing the invalid digest string.
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1** — [`registry/api/v2/descriptors.go#L617-L632`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/v2/descriptors.go#L617-L632)
+  ```json
+  {
+      "errors:" [{
+          "code": "BLOB_UNKNOWN",
+          "message": "blob unknown to registry",
+          "detail": {
+              "digest": "<digest>"
+          }
+      }]
+  }
+  ```
+  The canonical implementation documented the `detail.digest` schema in its endpoint descriptor table since v2.7.1. This is the source document from which the `detail.md` content originated.
+  > Current behavior: [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go) — same schema still present in the descriptors for both `BLOB_UNKNOWN` (with `detail.digest`) and `DIGEST_INVALID` (with `detail.digest` containing the invalid digest string); only the spec lost it.
+
+### Other implementations
 
 - **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
   Constructs error responses with the `BLOB_UNKNOWN` code and passes the digest as the detail

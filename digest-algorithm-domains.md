@@ -56,13 +56,24 @@ accept incorrect content if the client prefers the server header over its own ca
 
 ## Evidence From Implementations
 
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (client)** — [`registry/client/repository.go#L263-L276`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/repository.go#L263-L276)
+  ```go
+  digestHeader := headers.Get("Docker-Content-Digest")
+  if digestHeader == "" {
+      ...
+  }
+  dgst, err := digest.Parse(digestHeader)
+  ```
+  The v2.7.1 client reads `Docker-Content-Digest` from manifest responses, but does not have explicit logic for comparing it against a locally-computed digest or warning that the server header SHOULD NOT be trusted over local verification. The verification logic was left to callers.
+  > Current behavior: [`internal/client/repository.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/repository.go) — similar; the SHOULD-verify language added by PR #556 is in the spec but the client still delegates verification to callers. The current transport layer at [`internal/client/transport/http_reader.go#L205-L238`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/transport/http_reader.go#L205-L238) validates content against the request digest, parsing and cross-checking `Content-Range` against locally-expected values — implementing the "don't trust server header" principle in practice without the spec requiring it.
+
+### Other implementations
+
 - **containerd** — [`core/remotes/docker/resolver.go#L689-L692`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L689-L692)
   Accepts 206 and reads `Content-Range` for blob verification, but uses the locally-known
   digest from the manifest as the ground truth, not the server header.
-
-- **distribution** — [`internal/client/transport/http_reader.go#L205-L238`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/transport/http_reader.go#L205-L238)
-  Validates content against the digest in the request, parsing and cross-checking
-  `Content-Range` against the local expected values.
 
 - **cue-labs-oci** — [`ociregistry/ociclient/client.go#L148-L159`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociclient/client.go#L148-L159)
   Validates the `Content-Range` on 206 response against the requested range.

@@ -22,6 +22,12 @@ slightly different lists.
 
 ## Evidence From Implementations
 
+### distribution v2.7 (canonical)
+
+The v2.7.1 client library did not implement retry logic — it propagated errors directly to callers. The retry behavior described in the original spec was a **client-side responsibility** that the spec documented but the canonical library left to higher layers. This absence is itself informative: the guidance was in the spec to fill a gap that the reference library left open.
+
+### Other implementations
+
 The following clients implement retry on 5xx, suggesting this is an operational necessity:
 
 - **containerd** — [`core/remotes/docker/resolver.go#L777-L779`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777-L779)

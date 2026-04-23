@@ -37,6 +37,22 @@ But it does not tell the client *how* to determine which scenario it is facing.
 
 ## Evidence From Implementations
 
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (server)** — [`registry/handlers/blobupload.go#L106-L144`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/blobupload.go#L106-L144)
+  ```go
+  if mountDigest != "" && fromRepo != "" {
+      opt, err := buh.createBlobMountOption(fromRepo, mountDigest)
+      ...
+      if ebm, ok := err.(distribution.ErrBlobMounted); ok {
+          // 201 Created — mounted
+      }
+  }
+  w.WriteHeader(http.StatusAccepted)  // fallback: 202
+  ```
+  The v2.7.1 server already handled `mount=` and `from=` parameters and fell back to 202 on failure, but provided no mechanism for the client to distinguish "mount unsupported" from "blob not found." The HEAD probe hint existed in the spec to fill this client-side disambiguation gap.
+  > Current behavior: unchanged structure; the server-side fallback behavior is identical.
+
 ### Clients using HEAD to probe before or after mount
 
 - **google/go-containerregistry** — [`pkg/v1/remote/write.go#L173-L177`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L173-L177)

@@ -64,13 +64,16 @@ Each file documents one category of lost content, with:
 
 ## Repository Commits Used for Evidence
 
-Client and registry citations are pinned to the following commits:
+Client and registry citations are pinned to the following commits.
+distribution v2.7.1 is treated as the canonical reference implementation and cited first;
+where behavior has changed, the current distribution HEAD is noted as an addendum.
 
-| Project | GitHub | Commit |
-|---------|--------|--------|
+| Project | GitHub | Ref |
+|---------|--------|-----|
+| **distribution/distribution v2.7.1** (canonical) | https://github.com/distribution/distribution | tag [`v2.7.1`](https://github.com/distribution/distribution/releases/tag/v2.7.1) |
+| distribution/distribution (current) | https://github.com/distribution/distribution | `f3af4de` |
 | containerd | https://github.com/containerd/containerd | `46a7bd7` |
 | cue-labs/oci | https://github.com/cue-labs/oci | `3adeb86` |
-| distribution/distribution | https://github.com/distribution/distribution | `f3af4de` |
 | docker/cli | https://github.com/docker/cli | `977ee83` |
 | google/go-containerregistry | https://github.com/google/go-containerregistry | `d4f1050` |
 | moby/moby | https://github.com/moby/moby | `dff719e` |

@@ -25,16 +25,21 @@ and restart, but that is only implied, never stated.
 
 ## Evidence From Implementations
 
-- **distribution** — [`internal/client/blob_writer.go#L33-L37`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L33-L37)
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (client)** — [`registry/client/blob_writer.go#L31-L37`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/blob_writer.go#L31-L37)
   ```go
   func (hbu *httpBlobUpload) handleErrorResponse(resp *http.Response) error {
       if resp.StatusCode == http.StatusNotFound {
           return distribution.ErrBlobUploadUnknown
       }
-      ...
+      return HandleErrorResponse(resp)
   }
   ```
-  Treats 404 as an unknown/dead session, requiring restart.
+  Any non-success response on an upload endpoint routes through `handleErrorResponse`; 404 maps to a restart signal, and all others propagate as terminal errors. This pattern has been present since v2.7.1.
+  > Current behavior: [`internal/client/blob_writer.go#L33-L37`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/internal/client/blob_writer.go#L33-L37) — identical. The current server descriptor at [`registry/api/v2/descriptors.go#L1210`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L1210) still reads: *"The upload is unknown to the registry. The upload must be restarted."*
+
+### Other implementations
 
 - **olareg** — [`blob.go#L123`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L123)
   ```go
@@ -42,12 +47,6 @@ and restart, but that is only implied, never stated.
   ```
   Returns `BLOB_UPLOAD_UNKNOWN` when a session ID is not found, indicating the session cannot
   be resumed (also lines 154, 388, 468).
-
-- **distribution** (server) — [`registry/api/v2/descriptors.go#L1210`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go#L1210)
-  ```
-  "The upload is unknown to the registry. The upload must be restarted."
-  ```
-  The server's own documentation says restart is required.
 
 ## Proposed Fix
 

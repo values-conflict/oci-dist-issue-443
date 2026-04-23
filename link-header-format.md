@@ -37,6 +37,17 @@ assume that all results have been received") and a worked example with four tags
 
 ## Evidence of Practical Need
 
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1 (client)** — [`registry/client/repository.go`](https://github.com/distribution/distribution/blob/v2.7.1/registry/client/repository.go)
+  ```go
+  if link := resp.Header.Get("Link"); link != "" {
+      linkURLStr := strings.Trim(strings.Split(link, ";")[0], "<>")
+  ```
+  The v2.7.1 client's tag pagination loop strips angle brackets with `strings.Trim(..., "<>")`, establishing that the angle-bracket wire format was the assumed contract from the start.
+  > Divergence: the v2.7.1 **server** ([`registry/handlers/tags.go`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/tags.go)) had no pagination at all — `GetTags` returned all tags in a single response with no `Link` header. The client was written for a pagination protocol that the server had not yet implemented.
+  > Current behavior: server-side pagination with `Link` headers is present but the explicit angle-bracket format note was never restored.
+
 Despite RFC 5988 being referenced, implementations have gotten the format wrong:
 
 - **olareg** — [`tag.go#L57`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/tag.go#L57)

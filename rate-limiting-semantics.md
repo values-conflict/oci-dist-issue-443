@@ -26,6 +26,20 @@ behavior does not need new normative prose, just the citations.
 
 ## Evidence From Implementations
 
+### distribution v2.7 (canonical)
+
+- **distribution v2.7.1** — [`registry/api/errcode/register.go#L67-L75`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/errcode/register.go#L67-L75)
+  ```go
+  ErrorCodeTooManyRequests = Register("errcode", ErrorDescriptor{
+      Value:   "TOOMANYREQUESTS",
+      ...
+      HTTPStatusCode: http.StatusTooManyRequests,
+  ```
+  `TOOMANYREQUESTS` was a registered first-class error code in the canonical implementation since v2.7.1, with an explicit HTTP 429 mapping — establishing that 429 with a `TOOMANYREQUESTS` body was the intended behavior. The spec's error table later added the code but dropped the RFC citation.
+  > Current behavior: identical mapping in current distribution.
+
+### Other implementations
+
 The following implementations follow RFC 6585 behavior without being directed to by the spec:
 
 - **olareg** — [`olareg.go#L184-L185`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg.go#L184-L185)
