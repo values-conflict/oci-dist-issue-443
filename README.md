@@ -49,8 +49,7 @@ Each file documents one category of lost content, with:
 |------|-------|
 | [stream-mode-patch.md](stream-mode-patch.md) | PATCH without `Content-Range` (stream mode) was documented; now silently expected by servers |
 | [416-response-headers.md](416-response-headers.md) | 416 response MUST include `Location`, `Range`, `Content-Length: 0` so client can resume |
-| [upload-4xx-terminal.md](upload-4xx-terminal.md) | Any 4xx (except 416) during upload terminates the session |
-| [upload-session-expiry.md](upload-session-expiry.md) | 404 on upload URL means session expired; client MUST restart |
+| [upload-error-semantics.md](upload-error-semantics.md) | Any 4xx (except 416) terminates the upload session; 404 specifically means session expired and client MUST restart |
 | [5xx-retry-guidance.md](5xx-retry-guidance.md) | 502/503/504 are transient and retriable; other 5xx are terminal |
 | [rate-limiting-semantics.md](rate-limiting-semantics.md) | RFC 6585 (429) and RFC 9110 §10.2.3 (Retry-After) not cited; add references |
 | [mount-head-probe.md](mount-head-probe.md) | Client MAY HEAD-probe blob to distinguish "mount unsupported" from "blob absent" |
@@ -58,8 +57,7 @@ Each file documents one category of lost content, with:
 | [link-header-format.md](link-header-format.md) | Pagination `Link` header angle-bracket format (RFC 5988-defined but implementers get it wrong); absence means end of results; worked example |
 | [digest-algorithm-domains.md](digest-algorithm-domains.md) | `Docker-Content-Digest` SHOULD NOT be trusted over locally-computed digest; "domains" concept |
 | [blob-unknown-detail-schema.md](blob-unknown-detail-schema.md) | `BLOB_UNKNOWN` and `DIGEST_INVALID` `detail` field schema (`{digest: "<value>"}`) |
-| [per-endpoint-error-codes.md](per-endpoint-error-codes.md) | Error codes that belong to each endpoint's 400/404/405 response are undocumented |
-| [manifest-put-400-errors.md](manifest-put-400-errors.md) | PUT manifest can return 400 (`MANIFEST_INVALID`, `MANIFEST_BLOB_UNKNOWN`, `NAME_INVALID`); endpoint table omits this |
+| [per-endpoint-error-codes.md](per-endpoint-error-codes.md) | Error codes that belong to each endpoint's 400/404/405 response are undocumented; includes the specific case of PUT manifest returning 400 |
 | [unknown-error-code-handling.md](unknown-error-code-handling.md) | Clients SHOULD treat unknown error codes as `UNKNOWN`; error codes only added, never removed |
 
 ## Repository Commits Used for Evidence

@@ -73,10 +73,6 @@ When a request receives a `502 Bad Gateway`, `503 Service Unavailable`, or
 `504 Gateway Timeout` response, the client SHOULD assume the condition is temporary and
 MAY retry the request using an appropriate backoff strategy.
 Other `5xx` error responses SHOULD be treated as terminal for that request attempt.
-
-During a blob upload, any `4xx` response (except `416 Requested Range Not Satisfiable`,
-which indicates the need to resume from a different offset) MUST be treated as a failed
-upload.
-The client SHOULD then issue a `DELETE` request to cancel the upload session (see
-[Cancel a blob upload](#cancel-a-blob-upload)) before retrying from the beginning.
 ```
+
+For the corresponding rules about `4xx` responses during blob uploads, see [upload-error-semantics.md](upload-error-semantics.md).

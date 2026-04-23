@@ -18,7 +18,7 @@ corresponds to which failure condition.
 
 ### Key examples of lost per-endpoint error code mappings
 
-**`PUT /v2/<name>/manifests/<reference>` (end-7)**:
+**`PUT /v2/<name>/manifests/<reference>` (end-7a, end-7b)**:
 The original listed these 400-class error codes for a PUT manifest:
 - `NAME_INVALID` — invalid repository name
 - `TAG_INVALID` — manifest tag did not match URI tag  
@@ -27,7 +27,12 @@ The original listed these 400-class error codes for a PUT manifest:
 - `BLOB_UNKNOWN` — manifest references an unknown blob
 
 The current endpoint table shows only `404` and `413` as failure codes — all 400-class
-validation errors are absent.
+validation errors are absent. This is the most practically severe gap since it leaves clients
+with no guidance on why a manifest push was rejected with `400 Bad Request`.
+
+Note that in distribution v2.7.1, unknown-blob errors on manifest push returned
+`MANIFEST_INVALID` (not the later-introduced `MANIFEST_BLOB_UNKNOWN`); the distinction
+was introduced after the spec reorganization.
 
 **`GET /v2/<name>/blobs/<digest>` (end-2)**:
 Original 400-class codes: `NAME_INVALID`, `DIGEST_INVALID`.
@@ -60,6 +65,16 @@ Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID
 - **distribution v2.7.1 (server)** — [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/v2/descriptors.go)
   The entire file is a machine-readable per-endpoint mapping of error codes to HTTP status codes — the source document that `detail.md` was generated from. It covers every endpoint with the exact error codes that can be returned for each HTTP status. The current spec deleted this mapping; the canonical implementation still carries it.
   > Current behavior: [`registry/api/v2/descriptors.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/api/v2/descriptors.go) — unchanged; still a comprehensive per-endpoint error code table, only the spec no longer reflects it.
+
+- **distribution v2.7.1 (server, PUT manifest specifically)** — [`registry/handlers/manifests.go#L247-L274`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/manifests.go#L247-L274)
+  ```go
+  if err == distribution.ErrBlobUnknown {
+      imh.Errors = append(imh.Errors, v2.ErrorCodeManifestInvalid.WithDetail(err))
+  ...
+  imh.Errors = append(imh.Errors, v2.ErrorCodeTagInvalid.WithDetail(err))
+  ```
+  In v2.7.1, PUT manifest returned 400 with `MANIFEST_INVALID`, `TAG_INVALID` — none of which appear in the current endpoint table.
+  > Current behavior: [`registry/handlers/manifests.go`](https://github.com/distribution/distribution/blob/f3af4de047a01241bea867e755be18ac8b109f91/registry/handlers/manifests.go) — now returns `MANIFEST_BLOB_UNKNOWN` for missing blobs (split from `MANIFEST_INVALID` in a later version); still returns 400 for all validation failures; still absent from the endpoint table.
 
 ### Other implementations
 
@@ -114,3 +129,25 @@ Add after each endpoint's description a table enumerating errors, e.g. for PUT m
 
 Option B is more comprehensive and was the original approach; Option A is more compact and
 more appropriate for a summary specification.
+
+### Immediate fix: update the endpoint table for end-7a and end-7b
+
+As the most practically impactful gap, the PUT manifest rows should be corrected first:
+
+```
+| end-7a | `PUT` | `/v2/<name>/manifests/<reference>`          | `201` | `400`/`404`/`413` |
+| end-7b | `PUT` | `/v2/<name>/manifests/<digest>?tag=1&tag=2` | `201` | `400`/`404`/`413` |
+```
+
+And add to [§Pushing Manifests](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-manifests):
+
+```markdown
+If the manifest fails validation, the registry MUST return `400 Bad Request`.
+The response body SHOULD contain one or more of the following error codes:
+
+| Error Code              | Condition |
+|-------------------------|-----------|
+| `NAME_INVALID`          | The repository `<name>` is not a valid repository name |
+| `MANIFEST_INVALID`      | The manifest body failed schema or content validation |
+| `MANIFEST_BLOB_UNKNOWN` | The manifest references a blob or manifest not present in the registry |
+```
