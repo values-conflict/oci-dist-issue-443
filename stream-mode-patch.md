@@ -45,6 +45,19 @@ It is simpler to implement and is what most clients actually do when pushing sma
 
 - [#404](https://github.com/opencontainers/distribution-spec/pull/404) — "Allow Content-Length to be omitted when pushing on patch requests" (**open**): directly related; proposes making `Content-Length` optional on `PATCH`, which is a prerequisite for stream-mode uploads where the total size is not always known upfront.
 
+## Conformance Tests
+
+### Existing suite
+
+- **"Blob Upload Streamed"** — [`conformance/02_push_test.go#L38-L70`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/02_push_test.go#L38-L70)
+  The shipped conformance suite already includes a "Blob Upload Streamed" context: a PATCH with the full blob body and no `Content-Range`, followed by a closing PUT.
+  Stream mode is therefore already a conformance requirement despite not being described in the spec text.
+
+### PR #588 (proposed)
+
+- **`BlobPatchStream` / `TestPushBlobPatchStream`** — [PR #588](https://github.com/opencontainers/distribution-spec/pull/588), [`conformance/api.go#L534-L621`](https://github.com/sudo-bmitch/distribution-spec/blob/pr-conformance-v2/conformance/api.go#L534-L621)
+  The redesigned suite provides a more structured `BlobPatchStream` function, including digest verification on the completed upload, as a named API type (`stateAPIBlobPatchStream`) that registries can declare support for.
+
 ## Evidence From Implementations
 
 ### distribution v2.7 (canonical)

@@ -50,6 +50,22 @@ Directing clients to "issue a GET request to retrieve the current valid offset" 
 - [#593](https://github.com/opencontainers/distribution-spec/pull/593) — "Clarify that 416 is valid on a blob put" (merged): confirmed 416 is a valid response for the closing `PUT` of an upload. Does **not** address the response headers (`Location`, `Range`, `Content-Length: 0`) that must accompany a 416 on a `PATCH` so the client can recover without a separate `GET`.
 - [#366](https://github.com/opencontainers/distribution-spec/pull/366) — "Add a patch status to recover failed requests" (merged): added the `GET /v2/<name>/blobs/uploads/<reference>` endpoint (end-13) as a recovery mechanism. The current spec directs clients to issue a `GET` after a 416; our issue is that the 416 itself should carry enough headers to avoid that extra round-trip.
 
+## Conformance Tests
+
+### Existing suite
+
+- **"Out-of-order blob upload should return 416"** — [`conformance/02_push_test.go#L170-L197`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/02_push_test.go#L170-L197)
+- **"Retry previous blob chunk should return 416"** — [`conformance/02_push_test.go#L220-L230`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/02_push_test.go#L220-L230)
+  Both tests assert only `StatusCode == 416`; neither checks `Location`, `Range`, or `Content-Length: 0` on the 416 response itself.
+  Recovery is demonstrated via a subsequent GET ([`#L232-L241`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/02_push_test.go#L232-L241)), which checks `Location` and `Range` on the 204 — but this requires the extra round-trip that the proposed fix would eliminate.
+
+### PR #588 (proposed)
+
+- **`BlobPatchChunked` with `OutOfOrderChunks`** — [PR #588](https://github.com/opencontainers/distribution-spec/pull/588), [`conformance/api.go#L402-L440`](https://github.com/sudo-bmitch/distribution-spec/blob/pr-conformance-v2/conformance/api.go#L402-L440)
+  Adds `apiReturnHeader("Location", &loc)` at [`#L410`](https://github.com/sudo-bmitch/distribution-spec/blob/pr-conformance-v2/conformance/api.go#L410) on the 416 response itself, requiring `Location` to be present on the 416.
+  `Range` and `Content-Length: 0` on the 416 are still not checked; recovery remains via a subsequent GET.
+  The full set of recovery headers on the 416 itself (`Location`, `Range`, `Content-Length: 0`) remains untested in both suites, making this issue's proposed fix directly actionable as a further conformance test improvement.
+
 ## Evidence From Implementations
 
 ### distribution v2.7 (canonical)

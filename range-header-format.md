@@ -65,6 +65,21 @@ This creates two problems:
 - [#581](https://github.com/opencontainers/distribution-spec/pull/581) — "Clarify the Range header on a chunked push response" (merged): clarified that `<end-of-range>` is the offset of the last byte of the **entire blob**, not the last chunk. This is now in the current spec. It does **not** address the `bytes=` prefix question or the initial-state `0-0` semantics.
 - [#203](https://github.com/opencontainers/distribution-spec/pull/203) — "fixed to use 'bytes' unit for Content-Range to spec/test" (closed, **not merged**): directly attempted to require the `bytes=` prefix per RFC 7233; closed without merging.
 
+## Conformance Tests
+
+### Existing suite
+
+- **Chunked upload Range header assertions** — [`conformance/02_push_test.go#L199-L260`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/02_push_test.go#L199-L260)
+  The shipped tests assert `Expect(resp.Header().Get("Range")).To(Equal(testBlobBChunk1Range))` on 202 PATCH responses and 204 GET responses, where `testBlobBChunk1Range = fmt.Sprintf("0-%d", ...)` (see [`conformance/setup.go#L673`](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/conformance/setup.go#L673)).
+  The bare `0-N` format is therefore already a shipped conformance requirement.
+  The initial-state `0-0` semantics (Range value on a fresh session before any bytes are received) are not tested.
+
+### PR #588 (proposed)
+
+- **`BlobPatchChunked` GET recovery** — [PR #588](https://github.com/opencontainers/distribution-spec/pull/588), [`conformance/api.go#L429`](https://github.com/sudo-bmitch/distribution-spec/blob/pr-conformance-v2/conformance/api.go#L429)
+  The redesigned suite uses `strings.CutPrefix(rangeHeader, "0-")` when parsing the Range header from the GET recovery response after a 416, confirming the bare `0-N` format is required in that path as well.
+  The initial-state `0-0` semantics remain untested.
+
 ## Evidence From Implementations
 
 ### distribution v2.7 (canonical)
