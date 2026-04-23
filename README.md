@@ -1,22 +1,19 @@
 # Issue 443 — Content Lost in the c90b0f1 Reorganization
 
-This catalogs technical content that was present in the OCI Distribution Spec
-before commit [`c90b0f145ac6bc09d2636ee214486ac333edc284`](https://github.com/opencontainers/distribution-spec/commit/c90b0f145ac6bc09d2636ee214486ac333edc284)
-("Reorganize distribution spec") and has not been restored in the current `spec.md`.
+This catalogs technical content that was present in the OCI Distribution Spec before commit [`c90b0f145ac6bc09d2636ee214486ac333edc284`](https://github.com/opencontainers/distribution-spec/commit/c90b0f145ac6bc09d2636ee214486ac333edc284) ("Reorganize distribution spec") and has not been restored in the current `spec.md`.
 
 ## History
 
-The commit split a 4,603-line `spec.md` into a 425-line `spec.md` plus a new 3,761-line
-`detail.md`. A subsequent commit ([`1877628`](https://github.com/opencontainers/distribution-spec/commit/187762882835c04ead2534af09d78fc846b966d5)) restored some sections, and
-[`a92b62e`](https://github.com/opencontainers/distribution-spec/commit/a92b62ee17c3a89e3d18fd1288e6f7547a9696d5) folded more content back in. Then
-[`edbe27f`](https://github.com/opencontainers/distribution-spec/commit/edbe27fcffdb28899fff98f81747f8b7980fd590) deleted `detail.md` entirely. A significant amount of
-conformance-relevant protocol behavior was deleted and never restored.
+The commit split a 4,603-line `spec.md` into a 425-line `spec.md` plus a new 3,761-line `detail.md`. A subsequent commit ([`1877628`](https://github.com/opencontainers/distribution-spec/commit/187762882835c04ead2534af09d78fc846b966d5)) restored some sections, and [`a92b62e`](https://github.com/opencontainers/distribution-spec/commit/a92b62ee17c3a89e3d18fd1288e6f7547a9696d5) folded more content back in.
+Then [`edbe27f`](https://github.com/opencontainers/distribution-spec/commit/edbe27fcffdb28899fff98f81747f8b7980fd590) deleted `detail.md` entirely.
+A significant amount of conformance-relevant protocol behavior was deleted and never restored.
 
-The current `spec.md` is 921 lines. The pre-reorganization `spec.md` was 4,603 lines.
+The current `spec.md` is 921 lines.
+The pre-reorganization `spec.md` was 4,603 lines.
 
 ## Context
 
-This directory is a response to [issue #443](https://github.com/opencontainers/distribution-spec/issues/443) ("Historical curiosity: Why did we delete half the spec, again?") and [issue #446](https://github.com/opencontainers/distribution-spec/issues/446) ("spec is missing details"), both of which identify the same gap without cataloguing it in detail.
+This work is a response to [issue #443](https://github.com/opencontainers/distribution-spec/issues/443) ("Historical curiosity: Why did we delete half the spec, again?") and [issue #446](https://github.com/opencontainers/distribution-spec/issues/446) ("spec is missing details"), both of which identify the same gap without cataloguing it in detail.
 
 ## Scope
 
@@ -27,7 +24,8 @@ Findings are divided into three tiers:
 
 ## Issues
 
-Each file documents one category of lost content. For Critical and Important findings:
+Each file documents one category of lost content.
+For Critical and Important findings:
 
 - **What was lost** — quoted original text with pinned link to historical source
 - **Why it matters** — conformance / interoperability impact
@@ -66,8 +64,7 @@ Each file documents one category of lost content. For Critical and Important fin
 ## Repository Commits Used for Evidence
 
 Client and registry citations are pinned to the following commits.
-distribution v2.7.1 is treated as the canonical reference implementation and cited first;
-where behavior has changed, the current distribution HEAD is noted as an addendum.
+distribution v2.7.1 is treated as the canonical reference implementation and cited first; where behavior has changed, the current distribution HEAD is noted as an addendum.
 
 | Project | GitHub | Ref |
 |---------|--------|-----|

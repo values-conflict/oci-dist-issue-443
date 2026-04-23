@@ -6,8 +6,7 @@
 
 ## What Was Lost / Changed
 
-The original spec defined the `Range` header in upload state machine responses using the
-`bytes=` prefix per RFC 7233:
+The original spec defined the `Range` header in upload state machine responses using the `bytes=` prefix per RFC 7233:
 
 ```http
 202 Accepted
@@ -31,12 +30,10 @@ Content-Length: 0
 
 > — *[§Chunked Upload](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#chunked-upload) (202 response), [§Upload Progress](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#upload-progress) (204 GET response)*
 
-Note the original spec was itself inconsistent: the 416 response omits the `bytes=` prefix
-while the 202 and 204 responses include it. This inconsistency was present in the original and
-has been silently inherited.
+Note the original spec was itself inconsistent: the 416 response omits the `bytes=` prefix while the 202 and 204 responses include it.
+This inconsistency was present in the original and has been silently inherited.
 
-The current spec uses the bare `0-<end>` format (without `bytes=`) throughout — for both the
-PATCH 202 response and the GET 204 response:
+The current spec uses the bare `0-<end>` format (without `bytes=`) throughout — for both the PATCH 202 response and the GET 204 response:
 
 ```
 Range: 0-<end-of-range>
@@ -133,10 +130,8 @@ Add to the description of the 202 PATCH response in [§Pushing a blob in chunks]
 
 ---
 
-When no bytes have yet been received (i.e., immediately after the initiating `POST`), the
-`Range` value MUST be `0-0`, indicating that the next byte to be sent is byte 0.
-After the first successful chunk upload, the `<end-of-range>` value is the zero-based index
-of the last byte received.
+When no bytes have yet been received (i.e., immediately after the initiating `POST`), the `Range` value MUST be `0-0`, indicating that the next byte to be sent is byte 0.
+After the first successful chunk upload, the `<end-of-range>` value is the zero-based index of the last byte received.
 
 ---
 

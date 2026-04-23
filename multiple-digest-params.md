@@ -6,8 +6,7 @@
 
 ## What Was Lost
 
-The original spec explicitly allowed multiple `digest` query parameters in the same PUT
-request for completing a blob upload, enabling multi-algorithm verification:
+The original spec explicitly allowed multiple `digest` query parameters in the same PUT request for completing a blob upload, enabling multi-algorithm verification:
 
 > Optionally, if all chunks have already been uploaded, a `PUT` request with a `digest`
 > parameter and zero-length body MAY be sent to complete and validate the upload.
@@ -17,12 +16,9 @@ request for completing a blob upload, enabling multi-algorithm verification:
 >
 > — *[§Completed Upload](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#completed-upload)*
 
-The current spec describes only a single `digest` query parameter and is entirely silent on
-whether multiple `digest` parameters are permitted.
+The current spec describes only a single `digest` query parameter and is entirely silent on whether multiple `digest` parameters are permitted.
 
-This feature allows a client to supply both a `sha256` and a `sha512` (or other algorithm)
-digest in the same request, enabling the registry to verify the blob using whichever algorithm
-it prefers or supports, without requiring a second round-trip.
+This feature allows a client to supply both a `sha256` and a `sha512` (or other algorithm) digest in the same request, enabling the registry to verify the blob using whichever algorithm it prefers or supports, without requiring a second round-trip.
 
 ## Related PRs
 
@@ -33,7 +29,9 @@ it prefers or supports, without requiring a second round-trip.
 
 ### distribution v2.7 (canonical)
 
-The v2.7.1 PUT blob upload endpoint accepted a single `digest` query parameter only — multiple `digest` parameters were not implemented. The original spec language permitting multiple digests was therefore aspirational, describing intended future behavior rather than current canonical behavior. This is one of the few cases where the original spec text was ahead of distribution.
+The v2.7.1 PUT blob upload endpoint accepted a single `digest` query parameter only — multiple `digest` parameters were not implemented.
+The original spec language permitting multiple digests was therefore aspirational, describing intended future behavior rather than current canonical behavior.
+This is one of the few cases where the original spec text was ahead of distribution.
 
 ### Other implementations
 
@@ -56,8 +54,7 @@ The v2.7.1 PUT blob upload endpoint accepted a single `digest` query parameter o
 
 ### Amend [§POST then PUT](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#post-then-put)
 
-After the sentence "Here, `<digest>` is the digest of the blob being uploaded, and `<length>`
-is its size in bytes.", add:
+After the sentence "Here, `<digest>` is the digest of the blob being uploaded, and `<length>` is its size in bytes.", add:
 
 ```markdown
 Multiple `digest` query parameters MAY be provided in the same `PUT` request, each using a

@@ -6,9 +6,7 @@
 
 ## What Was Lost
 
-The original spec defined a precise conceptual model for how clients should handle the
-`Docker-Content-Digest` response header when the returned digest algorithm differs from the
-one used in the request:
+The original spec defined a precise conceptual model for how clients should handle the `Docker-Content-Digest` response header when the returned digest algorithm differs from the one used in the request:
 
 > The client MAY choose to ignore the header or MAY verify it to ensure content integrity
 > and transport security. This is most important when fetching by a digest.
@@ -42,9 +40,8 @@ This drops:
 
 ## Why This Matters
 
-The dropped IMPORTANT note is a security requirement, not just a nicety. A server that returns
-a false `Docker-Content-Digest` (e.g., due to a bug or a MITM) could cause a naive client to
-accept incorrect content if the client prefers the server header over its own calculation.
+The dropped IMPORTANT note is a security requirement, not just a nicety.
+A server that returns a false `Docker-Content-Digest` (e.g., due to a bug or a MITM) could cause a naive client to accept incorrect content if the client prefers the server header over its own calculation.
 
 ## Related Issues
 

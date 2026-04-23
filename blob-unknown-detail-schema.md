@@ -6,8 +6,7 @@
 
 ## What Was Lost
 
-The deleted `detail.md` contained a specific description of the `BLOB_UNKNOWN` and
-`DIGEST_INVALID` error codes that called out the structure of their `detail` fields:
+The deleted `detail.md` contained a specific description of the `BLOB_UNKNOWN` and `DIGEST_INVALID` error codes that called out the structure of their `detail` fields:
 
 > `BLOB_UNKNOWN`: This error MAY be returned when a blob is unknown to the registry in a
 > specified repository. This can be returned with a standard get or if a manifest references
@@ -19,10 +18,7 @@ The deleted `detail.md` contained a specific description of the `BLOB_UNKNOWN` a
 >
 > — *[§Errors](https://github.com/opencontainers/distribution-spec/blob/e20e7f0e419fc34928f934fb85e2bce1c83d11c5/detail.md#errors)*
 
-The original `spec_before.md` also described this concretely in the context of manifest upload
-validation: when a manifest references blobs unknown to the registry, the response includes
-one `BLOB_UNKNOWN` error per unknown blob, each with a `detail` object containing the digest
-of the missing blob:
+The original `spec_before.md` also described this concretely in the context of manifest upload validation: when a manifest references blobs unknown to the registry, the response includes one `BLOB_UNKNOWN` error per unknown blob, each with a `detail` object containing the digest of the missing blob:
 
 ```json
 {
@@ -48,8 +44,7 @@ But it does not specify:
 2. What the `detail` field of `BLOB_UNKNOWN` or `MANIFEST_BLOB_UNKNOWN` contains.
 3. The `detail.digest` schema.
 
-Similarly for `DIGEST_INVALID` — the `detail.digest` field is documented in the original
-but absent from the current spec.
+Similarly for `DIGEST_INVALID` — the `detail.digest` field is documented in the original but absent from the current spec.
 
 ## Related Issues
 
@@ -100,7 +95,7 @@ Update the descriptions for code-1 and code-4:
 
 After the `MANIFEST_BLOB_UNKNOWN` sentence, add:
 
-```markdown
+````markdown
 When one or more referenced blobs are unknown, the registry SHOULD return one
 `MANIFEST_BLOB_UNKNOWN` error per unknown blob.
 Each error's `detail` field SHOULD be an object with a `digest` key containing the digest
@@ -119,3 +114,4 @@ of the unknown blob, for example:
     ]
 }
 ```
+````

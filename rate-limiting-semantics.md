@@ -6,9 +6,8 @@
 
 ## What Was Lost
 
-The `TOOMANYREQUESTS` error code appears in the current spec's error table (code-14) with a
-one-line description "too many requests" and no further guidance. The spec does not reference
-the RFCs that define this behavior, leaving implementers without normative grounding.
+The `TOOMANYREQUESTS` error code appears in the current spec's error table (code-14) with a one-line description "too many requests" and no further guidance.
+The spec does not reference the RFCs that define this behavior, leaving implementers without normative grounding.
 
 The relevant standards are:
 - **RFC 6585** — defines the `429 Too Many Requests` HTTP status code and its use with a
@@ -16,9 +15,8 @@ The relevant standards are:
 - **RFC 9110 §10.2.3** — defines the `Retry-After` header semantics (already referenced in
   spec for Range support; §10.2.3 is the applicable sub-section for retry).
 
-Both are not currently cited in the spec. Any implementer reading RFC 6585 would know that
-429 SHOULD include a `Retry-After` header and that clients SHOULD back off accordingly — this
-behavior does not need new normative prose, just the citations.
+Both are not currently cited in the spec.
+Any implementer reading RFC 6585 would know that 429 SHOULD include a `Retry-After` header and that clients SHOULD back off accordingly — this behavior does not need new normative prose, just the citations.
 
 ## Related PRs
 
@@ -56,7 +54,8 @@ The following implementations follow RFC 6585 behavior without being directed to
 
 ## Proposed Fix
 
-No new normative prose is needed. Add RFC citations in two places:
+No new normative prose is needed.
+Add RFC citations in two places:
 
 ### 1. Amend the `TOOMANYREQUESTS` row in [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes)
 

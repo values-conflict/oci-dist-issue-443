@@ -5,8 +5,7 @@
 
 ## What Was Lost
 
-The original spec contained an explicit forward-compatibility requirement for clients
-encountering error codes not listed in the spec:
+The original spec contained an explicit forward-compatibility requirement for clients encountering error codes not listed in the spec:
 
 > While the client can take action on certain error codes, the registry MAY add new error
 > codes over time. All client implementations SHOULD treat unknown error codes as `UNKNOWN`,
@@ -15,13 +14,10 @@ encountering error codes not listed in the spec:
 >
 > — *[§Errors](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#errors)*
 
-The current [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes) defines the table of known codes and the JSON
-structure, but says nothing about how clients should handle error codes they do not recognize.
-Without this language, a client that encounters an unrecognized error code (such as one added
-in a future spec version) has no guidance and may crash, error out, or behave unpredictably.
+The current [§Error Codes](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#error-codes) defines the table of known codes and the JSON structure, but says nothing about how clients should handle error codes they do not recognize.
+Without this language, a client that encounters an unrecognized error code (such as one added in a future spec version) has no guidance and may crash, error out, or behave unpredictably.
 
-The companion statement — "error codes will only be added and never removed" — gave implementers
-a stability guarantee that is also now absent.
+The companion statement — "error codes will only be added and never removed" — gave implementers a stability guarantee that is also now absent.
 
 ## Related Issues
 

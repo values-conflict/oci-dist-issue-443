@@ -16,11 +16,9 @@
 
 ## Note on RFC Coverage
 
-The angle-bracket syntax for `Link` headers is defined in
-[RFC 5988 §5](https://www.rfc-editor.org/rfc/rfc5988#section-5), which is already referenced
-in the spec. An implementer reading RFC 5988 would find the format. **This is therefore not
-missing normative content** — it is a request for an explicit example and clarifying prose
-because the RFC reference alone has demonstrably not been sufficient in practice.
+The angle-bracket syntax for `Link` headers is defined in [RFC 5988 §5](https://www.rfc-editor.org/rfc/rfc5988#section-5), which is already referenced in the spec.
+An implementer reading RFC 5988 would find the format.
+**This is therefore not missing normative content** — it is a request for an explicit example and clarifying prose because the RFC reference alone has demonstrably not been sufficient in practice.
 
 ## What Was Lost
 
@@ -32,8 +30,7 @@ The original spec included a concrete example with a named callout:
 >
 > — *[§Pagination](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#pagination)*
 
-Also lost: the termination-condition statement ("if the header is not present, the client can
-assume that all results have been received") and a worked example with four tags at `n=2`.
+Also lost: the termination-condition statement ("if the header is not present, the client can assume that all results have been received") and a worked example with four tags at `n=2`.
 
 ## Evidence of Practical Need
 
@@ -82,7 +79,8 @@ Despite RFC 5988 being referenced, implementations have gotten the format wrong:
 
 ## Proposed Fix
 
-No new normative requirements — RFC 5988 already covers them. Add to [§Listing Tags](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-tags):
+No new normative requirements — RFC 5988 already covers them.
+Add to [§Listing Tags](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#listing-tags):
 
 ```markdown
 Per [RFC 5988](https://www.rfc-editor.org/rfc/rfc5988), the URL in the `Link` header MUST

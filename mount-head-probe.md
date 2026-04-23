@@ -6,8 +6,7 @@
 
 ## What Was Lost
 
-The original spec included a specific client strategy note explaining how to distinguish
-between two different 202 fallback scenarios:
+The original spec included a specific client strategy note explaining how to distinguish between two different 202 fallback scenarios:
 
 > Note: a client MAY issue a HEAD request to check existence of a blob in a source repository
 > to distinguish between the registry not supporting blob mounts and the blob not existing in
@@ -15,13 +14,12 @@ between two different 202 fallback scenarios:
 >
 > — *[§Cross Repository Blob Mount](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#cross-repository-blob-mount)*
 
-When a mount fails, the registry returns `202 Accepted` with a fresh upload URL. This 202
-can mean either:
+When a mount fails, the registry returns `202 Accepted` with a fresh upload URL.
+This 202 can mean either:
 - The registry does not implement cross-repository mounts (falls back to standard upload), or
 - The registry supports mounts but the specific blob does not exist in the source repository.
 
-Without the HEAD probe hint, clients cannot distinguish these two cases and may waste bandwidth
-uploading a blob that already exists on the registry under a different repository namespace.
+Without the HEAD probe hint, clients cannot distinguish these two cases and may waste bandwidth uploading a blob that already exists on the registry under a different repository namespace.
 
 The current spec ([§Mounting a blob from another repository](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#mounting-a-blob-from-another-repository)) says:
 

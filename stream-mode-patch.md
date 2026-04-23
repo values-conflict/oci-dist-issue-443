@@ -16,8 +16,7 @@ Content-Range: <start>-<end>
 Content-Type: application/octet-stream
 ```
 
-**Stream mode** — no `Content-Range`; the entire body is streamed in a single PATCH with
-no pre-declared byte range:
+**Stream mode** — no `Content-Range`; the entire body is streamed in a single PATCH with no pre-declared byte range:
 ```http
 PATCH /v2/<name>/blobs/uploads/<session_id>
 Content-Type: application/octet-stream
@@ -25,18 +24,17 @@ Content-Type: application/octet-stream
 <full blob binary data>
 ```
 
-The `detail.md` (before deletion) explicitly documented the stream upload as a separate named
-sub-operation: *"Upload a stream of data to upload without completing the upload."*
+The `detail.md` (before deletion) explicitly documented the stream upload as a separate named sub-operation: *"Upload a stream of data to upload without completing the upload."*
 
 > — *[§Stream upload](https://github.com/opencontainers/distribution-spec/blob/e20e7f0e419fc34928f934fb85e2bce1c83d11c5/detail.md#stream-upload)*
 
-The current spec ([§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)) defines only the chunked mode (requiring `Content-Range`). Stream mode has been silently dropped.
+The current spec ([§Pushing a blob in chunks](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pushing-a-blob-in-chunks)) defines only the chunked mode (requiring `Content-Range`).
+Stream mode has been silently dropped.
 
 ## Why This Matters
 
-Stream mode is the dominant implementation strategy for clients that know the full blob in
-advance and want to avoid the chunked protocol overhead. It is simpler to implement and is
-what most clients actually do when pushing small-to-medium blobs.
+Stream mode is the dominant implementation strategy for clients that know the full blob in advance and want to avoid the chunked protocol overhead.
+It is simpler to implement and is what most clients actually do when pushing small-to-medium blobs.
 
 ## Related Issues
 

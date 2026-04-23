@@ -26,10 +26,7 @@ The current spec ([§Pulling blobs](https://github.com/opencontainers/distributi
 > A GET request to an existing blob URL MUST provide the expected blob, with a response
 > code that MUST be `200 OK`.
 
-That wording now *contradicts* the redirect behavior in active use: a registry that returns 307
-is technically non-conformant per the current text, even though it was explicitly allowed before
-and remains the dominant production deployment pattern for large registries redirecting to object
-storage or CDNs.
+That wording now *contradicts* the redirect behavior in active use: a registry that returns 307 is technically non-conformant per the current text, even though it was explicitly allowed before and remains the dominant production deployment pattern for large registries redirecting to object storage or CDNs.
 
 The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints)) lists only `200` as success and `404` as failure for end-2 — `307` does not appear at all.
 
@@ -98,19 +95,13 @@ Change the end-2 row to include `307` as a success code:
 
 ### 2. Add language to [§Pulling blobs](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#pulling-blobs)
 
-After the current sentence "A GET request to an existing blob URL MUST provide the expected
-blob, with a response code that MUST be `200 OK`.", change it to:
+After the current sentence "A GET request to an existing blob URL MUST provide the expected blob, with a response code that MUST be `200 OK`.", change it to:
 
 ---
 
-A successful response MUST have a code of `200 OK` or `307 Temporary Redirect` (or `302 Found`
-for clients that do not support HTTP/1.1).
-A registry MAY respond with a redirect to an alternate location for the blob content, such as
-a CDN or object storage endpoint.
+A successful response MUST have a code of `200 OK` or `307 Temporary Redirect` (or `302 Found` for clients that do not support HTTP/1.1). A registry MAY respond with a redirect to an alternate location for the blob content, such as a CDN or object storage endpoint.
 Clients MUST follow such redirects to retrieve the blob.
-When a redirect crosses host boundaries, clients MUST NOT automatically forward `Authorization`
-or other credential headers to the redirected host unless that host has been explicitly
-authorized for the target repository.
+When a redirect crosses host boundaries, clients MUST NOT automatically forward `Authorization` or other credential headers to the redirected host unless that host has been explicitly authorized for the target repository.
 
 ---
 

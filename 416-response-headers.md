@@ -6,8 +6,7 @@
 
 ## What Was Lost
 
-The original spec defined the exact headers a registry MUST return in a `416 Requested Range
-Not Satisfiable` response during a chunked upload, enabling the client to recover:
+The original spec defined the exact headers a registry MUST return in a `416 Requested Range Not Satisfiable` response during a chunked upload, enabling the client to recover:
 
 ```http
 416 Requested Range Not Satisfiable
@@ -39,8 +38,7 @@ This loses:
 4. The enumerated conditions that trigger a 416 (invalid `Content-Range` format, plus
    out-of-order chunk).
 
-Directing clients to "issue a GET request to retrieve the current valid offset" is weaker than
-having the 416 response itself carry the recovery information — it adds a round-trip.
+Directing clients to "issue a GET request to retrieve the current valid offset" is weaker than having the 416 response itself carry the recovery information — it adds a round-trip.
 
 ## Related Issues
 

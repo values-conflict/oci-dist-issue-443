@@ -6,47 +6,33 @@
 
 ## What Was Lost
 
-The deleted `detail.md` documented, for every single endpoint, the exact set of error codes
-that MAY be returned for each failure HTTP status. This was the most detailed part of the
-original specification and totalled over 3,000 lines. While the level of detail in `detail.md`
-may have been excessive for the main spec, the *endpoint table* in the original spec listed
-failure codes inline, and the spec prose described the 400-level error codes per endpoint.
+The deleted `detail.md` documented, for every single endpoint, the exact set of error codes that MAY be returned for each failure HTTP status.
+This was the most detailed part of the original specification and totalled over 3,000 lines.
+While the level of detail in `detail.md` may have been excessive for the main spec, the *endpoint table* in the original spec listed failure codes inline, and the spec prose described the 400-level error codes per endpoint.
 
-The current [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints) table lists only a simplified failure code set
-(e.g., `404`, `400`/`405`) with no information about *which* error code in the JSON body
-corresponds to which failure condition.
+The current [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints) table lists only a simplified failure code set (e.g., `404`, `400`/`405`) with no information about *which* error code in the JSON body corresponds to which failure condition.
 
 ### Key examples of lost per-endpoint error code mappings
 
-**`PUT /v2/<name>/manifests/<reference>` (end-7a, end-7b)**:
-The original listed these 400-class error codes for a PUT manifest:
+**`PUT /v2/<name>/manifests/<reference>` (end-7a, end-7b)**: The original listed these 400-class error codes for a PUT manifest:
 - `NAME_INVALID` — invalid repository name
 - `TAG_INVALID` — manifest tag did not match URI tag  
 - `MANIFEST_INVALID` — manifest failed validation
 - `MANIFEST_UNVERIFIED` — manifest failed signature verification
 - `BLOB_UNKNOWN` — manifest references an unknown blob
 
-The current endpoint table shows only `404` and `413` as failure codes — all 400-class
-validation errors are absent. This is the most practically severe gap since it leaves clients
-with no guidance on why a manifest push was rejected with `400 Bad Request`.
+The current endpoint table shows only `404` and `413` as failure codes — all 400-class validation errors are absent.
+This is the most practically severe gap since it leaves clients with no guidance on why a manifest push was rejected with `400 Bad Request`.
 
-Note that in distribution v2.7.1, unknown-blob errors on manifest push returned
-`MANIFEST_INVALID` (not the later-introduced `MANIFEST_BLOB_UNKNOWN`); the distinction
-was introduced after the spec reorganization.
+Note that in distribution v2.7.1, unknown-blob errors on manifest push returned `MANIFEST_INVALID` (not the later-introduced `MANIFEST_BLOB_UNKNOWN`); the distinction was introduced after the spec reorganization.
 
-**`GET /v2/<name>/blobs/<digest>` (end-2)**:
-Original 400-class codes: `NAME_INVALID`, `DIGEST_INVALID`.
+**`GET /v2/<name>/blobs/<digest>` (end-2)**: Original 400-class codes: `NAME_INVALID`, `DIGEST_INVALID`.
 
-**`POST /v2/<name>/blobs/uploads/` (end-4a)**:
-Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`.
+**`POST /v2/<name>/blobs/uploads/` (end-4a)**: Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`.
 
-**`PATCH /v2/<name>/blobs/uploads/<reference>` (end-5)**:
-Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`,
-`BLOB_UPLOAD_UNKNOWN`.
+**`PATCH /v2/<name>/blobs/uploads/<reference>` (end-5)**: Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`, `BLOB_UPLOAD_UNKNOWN`.
 
-**`PUT /v2/<name>/blobs/uploads/<reference>` (end-6)**:
-Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`,
-`BLOB_UPLOAD_UNKNOWN`, `SIZE_INVALID`.
+**`PUT /v2/<name>/blobs/uploads/<reference>` (end-6)**: Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID`, `BLOB_UPLOAD_UNKNOWN`, `SIZE_INVALID`.
 
 ## Related Issues
 
@@ -102,8 +88,8 @@ Original 400-class codes: `DIGEST_INVALID`, `NAME_INVALID`, `BLOB_UPLOAD_INVALID
 
 ### Option A: Extend the endpoint table in [§Endpoints](https://github.com/opencontainers/distribution-spec/blob/ed885fa765593c5294d3b55c0c78ee52825647f0/spec.md#endpoints)
 
-Add an "Error Codes" column listing the JSON body error codes that correspond to each failure
-HTTP status. Example for end-7a:
+Add an "Error Codes" column listing the JSON body error codes that correspond to each failure HTTP status.
+Example for end-7a:
 
 | ID    | Method | API Endpoint                               | Success     | Failure HTTP | Error Codes (body) |
 |-------|--------|--------------------------------------------|-------------|-------------|---------------------|
@@ -127,8 +113,7 @@ Add after each endpoint's description a table enumerating errors, e.g. for PUT m
 | 413         | *(none)*               | Manifest exceeds size limit |
 ```
 
-Option B is more comprehensive and was the original approach; Option A is more compact and
-more appropriate for a summary specification.
+Option B is more comprehensive and was the original approach; Option A is more compact and more appropriate for a summary specification.
 
 ### Immediate fix: update the endpoint table for end-7a and end-7b
 

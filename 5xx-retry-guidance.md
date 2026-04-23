@@ -6,8 +6,7 @@
 
 ## What Was Lost
 
-The original spec explicitly described which 5xx errors are transient (retriable) and which
-are terminal:
+The original spec explicitly described which 5xx errors are transient (retriable) and which are terminal:
 
 > If a 502, 503 or 504 error is received, the client SHOULD assume that the download can
 > proceed due to a temporary condition, honoring the appropriate retry mechanism.
@@ -15,16 +14,16 @@ are terminal:
 >
 > — *[§Errors](https://github.com/opencontainers/distribution-spec/blob/a6e5b091b1468662730ab1e5be55c61838643ab4/spec.md#errors-1)*
 
-This section appeared in the context of blob push errors but was intended generally. The current
-spec has no guidance anywhere on retry behavior for server-side errors, leaving every client
-implementation to invent its own policy — which, as seen below, they all have done with
-slightly different lists.
+This section appeared in the context of blob push errors but was intended generally.
+The current spec has no guidance anywhere on retry behavior for server-side errors, leaving every client implementation to invent its own policy — which, as seen below, they all have done with slightly different lists.
 
 ## Evidence From Implementations
 
 ### distribution v2.7 (canonical)
 
-The v2.7.1 client library did not implement retry logic — it propagated errors directly to callers. The retry behavior described in the original spec was a **client-side responsibility** that the spec documented but the canonical library left to higher layers. This absence is itself informative: the guidance was in the spec to fill a gap that the reference library left open.
+The v2.7.1 client library did not implement retry logic — it propagated errors directly to callers.
+The retry behavior described in the original spec was a **client-side responsibility** that the spec documented but the canonical library left to higher layers.
+This absence is itself informative: the guidance was in the spec to fill a gap that the reference library left open.
 
 ### Other implementations
 
