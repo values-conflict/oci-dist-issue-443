@@ -61,7 +61,7 @@ Despite RFC 5988 being referenced, implementations have gotten the format wrong:
   Uses `<%s>; rel=next` — correctly.
 
 - **olareg** (server, test) — [`olareg_test.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg_test.go)
-  Validates with `regexp.MustCompile(`^<([^>]+)>; rel=next$`)` — suggests the format has
+  Validates with ``regexp.MustCompile(`^<([^>]+)>; rel=next$`)`` — suggests the format has
   been wrong before and the test was written defensively.
 
 - **regclient** (client) — [`internal/httplink/httplink.go#L1`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/httplink/httplink.go#L1)
