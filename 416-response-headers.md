@@ -104,7 +104,7 @@ Directing clients to "issue a GET request to retrieve the current valid offset" 
 
 Replace the current 416 paragraph with:
 
-```markdown
+````markdown
 Chunks MUST be uploaded in order, with the first byte of a chunk being the last chunk's
 `<end-of-range>` plus one.
 A `416 Requested Range Not Satisfiable` response MUST be returned by the registry in either
@@ -128,4 +128,4 @@ Content-Length: 0
 registry for this session.
 The client SHOULD resume the upload by sending the next chunk starting at
 `<last-valid-byte> + 1`.
-```
+````
