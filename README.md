@@ -53,12 +53,17 @@ Each file documents one category of lost content, with:
 | [5xx-retry-guidance.md](5xx-retry-guidance.md) | 502/503/504 are transient and retriable; other 5xx are terminal |
 | [rate-limiting-semantics.md](rate-limiting-semantics.md) | RFC 6585 (429) and RFC 9110 §10.2.3 (Retry-After) not cited; add references |
 | [mount-head-probe.md](mount-head-probe.md) | Client MAY HEAD-probe blob to distinguish "mount unsupported" from "blob absent" |
-| [multiple-digest-params.md](multiple-digest-params.md) | PUT blob upload MAY include multiple `digest=` query params for multi-algorithm verification |
 | [link-header-format.md](link-header-format.md) | Pagination `Link` header angle-bracket format (RFC 5988-defined but implementers get it wrong); absence means end of results; worked example |
 | [digest-algorithm-domains.md](digest-algorithm-domains.md) | `Docker-Content-Digest` SHOULD NOT be trusted over locally-computed digest; "domains" concept |
 | [blob-unknown-detail-schema.md](blob-unknown-detail-schema.md) | `BLOB_UNKNOWN` and `DIGEST_INVALID` `detail` field schema (`{digest: "<value>"}`) |
 | [per-endpoint-error-codes.md](per-endpoint-error-codes.md) | Error codes that belong to each endpoint's 400/404/405 response are undocumented; includes the specific case of PUT manifest returning 400 |
 | [unknown-error-code-handling.md](unknown-error-code-handling.md) | Clients SHOULD treat unknown error codes as `UNKNOWN`; error codes only added, never removed |
+
+### Aspirational (was in the original spec but no implementation ever shipped it)
+
+| File | Topic |
+|------|-------|
+| [multiple-digest-params.md](multiple-digest-params.md) | PUT blob upload MAY include multiple `digest=` query params for multi-algorithm verification — described in the original spec but not implemented by distribution v2.7.1 or any known subsequent implementation; open PRs [#543](https://github.com/opencontainers/distribution-spec/pull/543) and [#547](https://github.com/opencontainers/distribution-spec/pull/547) are pursuing a related but different approach |
 
 ## Repository Commits Used for Evidence
 
