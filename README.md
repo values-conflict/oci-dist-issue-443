@@ -1,6 +1,6 @@
 # Issue 443 — Content Lost in the c90b0f1 Reorganization
 
-This directory catalogs technical content that was present in the OCI Distribution Spec
+This catalogs technical content that was present in the OCI Distribution Spec
 before commit [`c90b0f145ac6bc09d2636ee214486ac333edc284`](https://github.com/opencontainers/distribution-spec/commit/c90b0f145ac6bc09d2636ee214486ac333edc284)
 ("Reorganize distribution spec") and has not been restored in the current `spec.md`.
 
@@ -20,20 +20,18 @@ This directory is a response to [issue #443](https://github.com/opencontainers/d
 
 ## Scope
 
-Only findings that require **new normative language** (or an RFC citation not yet present)
-are included. Behavior fully defined by an already-referenced RFC (RFC 2119, RFC 5988,
-RFC 7231, RFC 7234, RFC 9110) is excluded on the grounds that it is derivable by any
-implementer reading those documents. One exception is noted: `link-header-format.md` is
-technically RFC 5988-defined but included because implementations demonstrably get it wrong.
+Findings are divided into three tiers:
+
+- **Critical / Important** — requires new normative language (or an RFC citation not yet present), backed by deployed implementations. Behavior fully defined by an already-referenced RFC (RFC 2119, RFC 5988, RFC 7231, RFC 7234, RFC 9110) is excluded as derivable by any implementer reading those documents. One exception: `link-header-format.md` is technically RFC 5988-defined but retained because implementations demonstrably get the format wrong.
+- **Aspirational** — was in the original spec but no known implementation ever shipped it. Included for completeness; the evidence section in these files documents the *absence* of implementation rather than deployment in practice.
 
 ## Issues
 
-Each file documents one category of lost content, with:
+Each file documents one category of lost content. For Critical and Important findings:
 
 - **What was lost** — quoted original text with pinned link to historical source
 - **Why it matters** — conformance / interoperability impact
-- **Evidence** — implementations in widely-used OCI client and registry projects that
-  demonstrate the feature is deployed in practice, with pinned GitHub URLs
+- **Evidence** — implementations in widely-used OCI client and registry projects that demonstrate the feature is deployed in practice, with pinned GitHub URLs
 - **Proposed fix** — exact proposed wording and insertion point in `spec.md`
 
 ### Critical (spec contradicts deployed behavior)
@@ -63,7 +61,7 @@ Each file documents one category of lost content, with:
 
 | File | Topic |
 |------|-------|
-| [multiple-digest-params.md](multiple-digest-params.md) | PUT blob upload MAY include multiple `digest=` query params for multi-algorithm verification — described in the original spec but not implemented by distribution v2.7.1 or any known subsequent implementation; open PRs [#543](https://github.com/opencontainers/distribution-spec/pull/543) and [#547](https://github.com/opencontainers/distribution-spec/pull/547) are pursuing a related but different approach |
+| [multiple-digest-params.md](multiple-digest-params.md) | PUT blob upload MAY include multiple `digest=` query params for multi-algorithm verification — in the original spec but never implemented; open PRs [#543](https://github.com/opencontainers/distribution-spec/pull/543)/[#547](https://github.com/opencontainers/distribution-spec/pull/547) pursue a different approach to the same problem |
 
 ## Repository Commits Used for Evidence
 
@@ -81,6 +79,5 @@ where behavior has changed, the current distribution HEAD is noted as an addendu
 | google/go-containerregistry | https://github.com/google/go-containerregistry | `d4f1050` |
 | moby/moby | https://github.com/moby/moby | `dff719e` |
 | regclient/regclient | https://github.com/regclient/regclient | `1a4d357` |
-| containers/skopeo | https://github.com/containers/skopeo | `1a4a0f9` |
 | olareg/olareg | https://github.com/olareg/olareg | `b50ccb7` |
 | project-zot/zot | https://github.com/project-zot/zot | `9ba5955` |
