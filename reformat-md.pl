@@ -34,6 +34,10 @@ my @ABBREVS = (
     "RFC.",
 );
 my %ABBREV = map { lc($_) => 1 } @ABBREVS;
+# Subset that always precede a proper name and must never trigger a split
+# regardless of what follows.  Everything else in %ABBREV may still be
+# terminal when a mixed-case word follows (see split_into_sentences below).
+my %NAME_ABBREV = map { lc($_) => 1 } qw(Mr. Mrs. Ms. Dr. St. Jr. Sr.);
 
 sub parse_continuation {
     my ($line) = @_;
@@ -179,7 +183,38 @@ sub split_into_sentences {
                     $plain =~ s/\([^)]*\)//g;     # strip (...) link parens
                     if ($plain =~ /\./) { $i = $j; next; }
                 }
-                if (looks_like_abbrev($token_for_abbrev)) { $i = $j; next; }
+                if (looks_like_abbrev($token_for_abbrev)) {
+                    my $is_abbrev = 1;
+
+                    # Single-letter token (e.g. "A.", "B."): treat as a name
+                    # initial only when it is the first word of the current span
+                    # OR immediately follows another initial period — i.e. it is
+                    # part of a chain like "A. B. Smith".  A label at sentence
+                    # end ("…processes A and B.") has an ordinary word before
+                    # the letter, so $chars[$k-2] will be a letter, not '.'.
+                    if ($token_for_abbrev =~ /^[A-Za-z]\.$/) {
+                        my $prev_ch = ($k > $start + 1) ? $chars[$k - 2] : '.';
+                        $is_abbrev = ($prev_ch eq '.');
+                    }
+                    # Non-name abbreviation (etc., e.g., i.e., cf., …): these
+                    # never precede proper names, so if a mixed-case word follows
+                    # it is almost certainly the start of a new sentence.
+                    # ALL-CAPS words (JSON, HTTP, RFC…) are acronyms; they can
+                    # follow an abbreviation mid-sentence and must NOT split.
+                    elsif (!exists $NAME_ABBREV{lc($token_for_abbrev)}) {
+                        my $after = $j;
+                        $after++ while $after < $n && $chars[$after] eq ' ';
+                        if ($after < $n && $chars[$after] =~ /[A-Z]/) {
+                            my $end = $after + 1;
+                            $end++ while $end < $n && $chars[$end] =~ /[A-Za-z]/;
+                            my $next_word = join('', @chars[$after .. $end - 1]);
+                            $is_abbrev = 0 if $next_word !~ /^[A-Z]{2,}$/;
+                        }
+                    }
+
+                    $i = $j; next if $is_abbrev;
+                    # fall through to sentence emission when $is_abbrev is false
+                }
             }
 
             my $sentence = join('', @chars[$start..$j-1]);
