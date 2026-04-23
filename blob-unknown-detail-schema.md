@@ -59,7 +59,7 @@ but absent from the current spec.
 
 ### distribution v2.7 (canonical)
 
-- **distribution v2.7.1** — [`registry/api/v2/descriptors.go#L617-L632`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/v2/descriptors.go#L617-L632)
+- **distribution v2.7.1 (server)** — [`registry/api/v2/descriptors.go#L617-L632`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/v2/descriptors.go#L617-L632)
   ```json
   {
       "errors:" [{
@@ -76,11 +76,11 @@ but absent from the current spec.
 
 ### Other implementations
 
-- **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
+- **olareg (server)** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
   Constructs error responses with the `BLOB_UNKNOWN` code and passes the digest as the detail
   string.
 
-- **cue-labs-oci** — [`ociregistry/error.go#L321`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L321)
+- **cue-labs-oci (shared)** — [`ociregistry/error.go#L321`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L321)
   ```go
   ErrBlobUnknown = NewError("blob unknown to registry", "BLOB_UNKNOWN", nil)
   ```

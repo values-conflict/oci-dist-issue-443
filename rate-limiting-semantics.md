@@ -28,7 +28,7 @@ behavior does not need new normative prose, just the citations.
 
 ### distribution v2.7 (canonical)
 
-- **distribution v2.7.1** — [`registry/api/errcode/register.go#L67-L75`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/errcode/register.go#L67-L75)
+- **distribution v2.7.1 (shared)** — [`registry/api/errcode/register.go#L67-L75`](https://github.com/distribution/distribution/blob/v2.7.1/registry/api/errcode/register.go#L67-L75)
   ```go
   ErrorCodeTooManyRequests = Register("errcode", ErrorDescriptor{
       Value:   "TOOMANYREQUESTS",
@@ -42,16 +42,16 @@ behavior does not need new normative prose, just the citations.
 
 The following implementations follow RFC 6585 behavior without being directed to by the spec:
 
-- **olareg** — [`olareg.go#L184-L185`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg.go#L184-L185)
+- **olareg (server)** — [`olareg.go#L184-L185`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/olareg.go#L184-L185)
   Emits `Retry-After: 1` with every 429 response.
 
-- **regclient** — [`internal/reghttp/http.go#L663-L686`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L663-L686)
+- **regclient (client)** — [`internal/reghttp/http.go#L663-L686`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L663-L686)
   Reads `Retry-After` and uses its value as the backoff duration.
 
-- **containerd** — [`core/remotes/docker/resolver.go#L777`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777)
+- **containerd (client)** — [`core/remotes/docker/resolver.go#L777`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777)
   Retries on 429, same as 408.
 
-- **google/go-containerregistry** — [`pkg/v1/remote/transport/error.go#L133-L144`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go#L133-L144)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/transport/error.go#L133-L144`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go#L133-L144)
   `TOOMANYREQUESTS` in `temporaryErrorCodes` — triggers retry.
 
 ## Proposed Fix

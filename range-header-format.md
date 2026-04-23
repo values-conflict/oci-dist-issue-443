@@ -94,15 +94,15 @@ This creates two problems:
 
 ### Other implementations
 
-- **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
+- **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
   ```go
   resp.Header().Set("Range", ocirequest.RangeString(0, w.Size()))
   ```
 
-- **cue-labs-oci** — [`ociregistry/internal/ocirequest/request.go#L428-L432`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/request.go#L428-L432)
+- **cue-labs-oci (server, internal)** — [`ociregistry/internal/ocirequest/request.go#L428-L432`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/internal/ocirequest/request.go#L428-L432)
   `RangeString` formats the header as `start-end` (bare, no `bytes=`).
 
-- **cue-labs-oci** (conformance tests) — [`ociregistry/ociserver/registry_test.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/registry_test.go)
+- **cue-labs-oci (server, conformance tests)** — [`ociregistry/ociserver/registry_test.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/registry_test.go)
   Test headers assert `"Range": "0-0"` for a fresh upload.
 
 ## Proposed Fix

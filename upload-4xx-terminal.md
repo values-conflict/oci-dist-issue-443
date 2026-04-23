@@ -41,7 +41,7 @@ and restart, but that is only implied, never stated.
 
 ### Other implementations
 
-- **olareg** — [`blob.go#L123`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L123)
+- **olareg (server)** — [`blob.go#L123`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L123)
   ```go
   types.ErrRespJSON(w, types.ErrInfoBlobUploadUnknown("upload session not found"))
   ```

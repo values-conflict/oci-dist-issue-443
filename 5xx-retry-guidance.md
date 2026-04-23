@@ -30,7 +30,7 @@ The v2.7.1 client library did not implement retry logic — it propagated errors
 
 The following clients implement retry on 5xx, suggesting this is an operational necessity:
 
-- **containerd** — [`core/remotes/docker/resolver.go#L777-L779`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777-L779)
+- **containerd (client)** — [`core/remotes/docker/resolver.go#L777-L779`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L777-L779)
   ```go
   case http.StatusRequestTimeout, http.StatusTooManyRequests:
       return true, nil
@@ -38,7 +38,7 @@ The following clients implement retry on 5xx, suggesting this is an operational 
   ```
   503, 504, and 500 are retried; 500 only on last host.
 
-- **regclient** — [`internal/reghttp/http.go#L474-L476`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L474-L476)
+- **regclient (client)** — [`internal/reghttp/http.go#L474-L476`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L474-L476)
   ```go
   case http.StatusTooManyRequests, http.StatusRequestTimeout,
        http.StatusGatewayTimeout, http.StatusBadGateway,
@@ -46,7 +46,7 @@ The following clients implement retry on 5xx, suggesting this is an operational 
       // server is likely overloaded, backoff but still retry
   ```
 
-- **google/go-containerregistry** — [`pkg/v1/remote/options.go#L94-L102`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/options.go#L94-L102)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/options.go#L94-L102`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/options.go#L94-L102)
   ```go
   var defaultRetryStatusCodes = []int{
       http.StatusRequestTimeout,

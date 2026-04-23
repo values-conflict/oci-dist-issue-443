@@ -51,27 +51,27 @@ a stability guarantee that is also now absent.
 
 ### Other implementations
 
-- **containerd** — [`core/remotes/docker/errdesc.go#L33-L36`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errdesc.go#L33-L36)
+- **containerd (client)** — [`core/remotes/docker/errdesc.go#L33-L36`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errdesc.go#L33-L36)
   ```go
   // ErrorCodeUnknown is a generic error that can be used as a last
   // resort if there is not a normal error code that can describe the situation.
   ErrorCodeUnknown = Register("errcode", ErrorDescriptor{Value: "UNKNOWN", ...})
   ```
 
-- **containerd** — [`core/remotes/docker/errcode.go#L184-L191`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errcode.go#L184-L191)
+- **containerd (client)** — [`core/remotes/docker/errcode.go#L184-L191`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/errcode.go#L184-L191)
   ```go
   // 'ErrorCodeUnknown' will be returned if the error is not known.
   return ErrorCodeUnknown.Descriptor()
   ```
 
 
-- **cue-labs-oci** — [`ociregistry/error.go#L269`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L269)
+- **cue-labs-oci (shared)** — [`ociregistry/error.go#L269`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/error.go#L269)
   ```go
   e.Code_ = "UNKNOWN"
   ```
   Default code assigned when an unspecified error is returned.
 
-- **google/go-containerregistry** — [`pkg/v1/remote/transport/error.go#L133-L144`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go#L133-L144)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/transport/error.go#L133-L144`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/transport/error.go#L133-L144)
   ```go
   UnknownErrorCode ErrorCode = "UNKNOWN"
   ```

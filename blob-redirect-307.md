@@ -46,7 +46,7 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ### distribution v2.7 (canonical)
 
-- **distribution v2.7.1** — [`registry/storage/blobserver.go#L41-L42`](https://github.com/distribution/distribution/blob/v2.7.1/registry/storage/blobserver.go#L41-L42)
+- **distribution v2.7.1 (server)** — [`registry/storage/blobserver.go#L41-L42`](https://github.com/distribution/distribution/blob/v2.7.1/registry/storage/blobserver.go#L41-L42)
   ```go
   // Redirect to storage URL.
   http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
@@ -56,7 +56,7 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ### Other implementations
 
-- **cue-labs-oci** — [`ociregistry/ociserver/reader.go#L61`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/reader.go#L61)
+- **cue-labs-oci (server)** — [`ociregistry/ociserver/reader.go#L61`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/reader.go#L61)
   ```go
   http.Redirect(resp, req, locs[0], http.StatusTemporaryRedirect)
   ```
@@ -64,7 +64,7 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ### Clients handling redirects
 
-- **containerd** — [`core/remotes/docker/resolver.go#L647-L656`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L647-L656)
+- **containerd (client)** — [`core/remotes/docker/resolver.go#L647-L656`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/resolver.go#L647-L656)
   Installs a custom `CheckRedirect` handler that re-authorizes each redirect hop and limits to 10 redirects.
 
 - **regclient** — [`internal/reghttp/http.go#L803-L811`](https://github.com/regclient/regclient/blob/1a4d357a3a6df1d4d4164bb1aa110fe0259a6c30/internal/reghttp/http.go#L803-L811)
@@ -73,10 +73,10 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
   ```
   `checkRedirect` injects auth headers for specific hosts in the redirect chain.
 
-- **docker/cli** — [`cli/context/docker/load.go#L117`](https://github.com/docker/cli/blob/977ee838e0ec5eb81eef2ba822af900548807516/cli/context/docker/load.go#L117)
+- **docker/cli (client)** — [`cli/context/docker/load.go#L117`](https://github.com/docker/cli/blob/977ee838e0ec5eb81eef2ba822af900548807516/cli/context/docker/load.go#L117)
   Sets `CheckRedirect: client.CheckRedirect` on every registry HTTP client.
 
-- **moby** — [`daemon/pkg/registry/search_endpoint_v1.go#L175-L197`](https://github.com/moby/moby/blob/dff719e3674958407416fd1d8a35db998f128da2/daemon/pkg/registry/search_endpoint_v1.go#L175-L197)
+- **moby (client)** — [`daemon/pkg/registry/search_endpoint_v1.go#L175-L197`](https://github.com/moby/moby/blob/dff719e3674958407416fd1d8a35db998f128da2/daemon/pkg/registry/search_endpoint_v1.go#L175-L197)
   `CheckRedirect: addRequiredHeadersToRedirectedRequests` — adds required auth headers to redirected requests.
 
 ## Proposed Fix

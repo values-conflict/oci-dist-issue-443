@@ -73,14 +73,14 @@ what most clients actually do when pushing small-to-medium blobs.
 
 ### Other implementations
 
-- **google/go-containerregistry** — [`pkg/v1/remote/write.go#L257-L288`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L257-L288)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/write.go#L257-L288`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L257-L288)
   ```go
   func (w *writer) streamBlob(...) (commitLocation string, rerr error) {
       req, err := http.NewRequest(http.MethodPatch, streamLocation, blob)
   ```
   `streamBlob` issues a single PATCH of the entire blob body with no `Content-Range`.
 
-- **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L89-L102`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L89-L102)
+- **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L89-L102`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L89-L102)
   ```go
   // Note that the spec requires chunked upload PATCH requests to include Content-Range,
   // but the conformance tests do not actually follow that as of the time of writing.

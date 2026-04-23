@@ -43,7 +43,7 @@ PUT manifest with the specific error codes above.
 
 ### distribution v2.7 (canonical)
 
-- **distribution v2.7.1** — [`registry/handlers/manifests.go#L247-L274`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/manifests.go#L247-L274)
+- **distribution v2.7.1 (server)** — [`registry/handlers/manifests.go#L247-L274`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/manifests.go#L247-L274)
   ```go
   if err == distribution.ErrBlobUnknown {
       imh.Errors = append(imh.Errors, v2.ErrorCodeManifestInvalid.WithDetail(err))
@@ -57,11 +57,11 @@ PUT manifest with the specific error codes above.
 
 ### Other implementations
 
-- **olareg** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
+- **olareg (server)** — [`types/errors.go`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/types/errors.go)
   Defines `MANIFEST_INVALID` and `MANIFEST_BLOB_UNKNOWN` error constructors that produce
   400 responses.
 
-- **zot** — [`pkg/api/routes.go`](https://github.com/project-zot/zot/blob/9ba59559d2f4bf2502e7fb4efa120e5558ee7bb6/pkg/api/routes.go)
+- **zot (server)** — [`pkg/api/routes.go`](https://github.com/project-zot/zot/blob/9ba59559d2f4bf2502e7fb4efa120e5558ee7bb6/pkg/api/routes.go)
   Returns 400 with appropriate error codes for manifest validation failures.
 
 ## Proposed Fix

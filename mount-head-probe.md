@@ -55,7 +55,7 @@ But it does not tell the client *how* to determine which scenario it is facing.
 
 ### Clients using HEAD to probe before or after mount
 
-- **google/go-containerregistry** — [`pkg/v1/remote/write.go#L173-L177`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L173-L177)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/write.go#L173-L177`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L173-L177)
   ```go
   // checkExistingBlob checks if a blob exists already in the repository by making a HEAD
   // request to the blob store API. GCR performs an existence check on the initiation if
@@ -64,7 +64,7 @@ But it does not tell the client *how* to determine which scenario it is facing.
   ```
   HEAD request is issued before attempting a mount to detect whether the blob exists at all.
 
-- **google/go-containerregistry** — [`pkg/v1/remote/write.go#L204-L237`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L204-L237)
+- **google/go-containerregistry (client)** — [`pkg/v1/remote/write.go#L204-L237`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/v1/remote/write.go#L204-L237)
   ```go
   if mount != "" && from != "" {
       uv.Set("mount", mount)
@@ -74,17 +74,17 @@ But it does not tell the client *how* to determine which scenario it is facing.
   Falls back to upload on mount failure; uses the HEAD result to decide whether to try mount
   at all.
 
-- **containerd** — [`core/remotes/docker/pusher.go#L577-L585`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/pusher.go#L577-L585)
+- **containerd (client)** — [`core/remotes/docker/pusher.go#L577-L585`](https://github.com/containerd/containerd/blob/46a7bd7acb81c337f41587a2e071dd8b0f2e5eae/core/remotes/docker/pusher.go#L577-L585)
   `requestWithMountFrom` appends `mount=<digest>&from=<repo>` and handles the 202 fallback.
 
 ### Servers implementing mount
 
-- **olareg** — [`blob.go#L186`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L186)
+- **olareg (server)** — [`blob.go#L186`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/blob.go#L186)
   ```go
   // check for mount=digest&from=repo, consider allowing anonymous blob mounts
   ```
 
-- **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L155`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L155)
+- **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L155`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L155)
   ```go
   r.backend.MountBlob(ctx, rreq.FromRepo, rreq.Repo, ...)
   ```

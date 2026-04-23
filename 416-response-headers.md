@@ -67,7 +67,7 @@ having the 416 response itself carry the recovery information — it adds a roun
 
 ### Other implementations
 
-- **cue-labs-oci** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
+- **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
   Sets `Range` header in upload responses; the logic for 416 vs 202 uses the same
   `ocirequest.RangeString` helper.
 
