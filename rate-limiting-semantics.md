@@ -20,7 +20,8 @@ Any implementer reading RFC 6585 would know that 429 SHOULD include a `Retry-Aft
 
 ## Related PRs
 
-- [#209](https://github.com/opencontainers/distribution-spec/pull/209) — "spec: add missing TOOMANYREQUESTS (429) error-code" (merged): added `TOOMANYREQUESTS` to the error code table. Did **not** add RFC 6585 or RFC 9110 §10.2.3 citations.
+- [#607](https://github.com/opencontainers/distribution-spec/pull/607) — "Permit 307 redirects on blob fetch and add RFC references" (**open**): adds the RFC 6585 and RFC 9110 (section 10.2.3) citations that resolve this issue.
+- [#209](https://github.com/opencontainers/distribution-spec/pull/209) — "spec: add missing TOOMANYREQUESTS (429) error-code" (merged): added `TOOMANYREQUESTS` to the error code table; did not add RFC citations.
 
 ## Evidence From Implementations
 
