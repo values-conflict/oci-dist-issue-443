@@ -80,6 +80,18 @@ what most clients actually do when pushing small-to-medium blobs.
   ```
   `streamBlob` issues a single PATCH of the entire blob body with no `Content-Range`.
 
+- **google/go-containerregistry (server)** — [`pkg/registry/blobs.go#L404-L448`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L404-L448)
+  ```go
+  if contentRange != "" {
+      // chunked path — parse Content-Range
+  }
+  // else: stream path — first write accepted; subsequent stream writes rejected
+  if _, ok := b.uploads[target]; ok {
+      return &regError{..., Message: "Stream uploads after first write are not allowed"}
+  }
+  ```
+  The ggcr server explicitly handles both modes: a PATCH with `Content-Range` goes through the chunked path; a PATCH without it goes through the stream path (first write only). This is the clearest binary implementation of the two-mode design.
+
 - **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L89-L102`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L89-L102)
   ```go
   // Note that the spec requires chunked upload PATCH requests to include Content-Range,

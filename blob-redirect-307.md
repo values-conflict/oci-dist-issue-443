@@ -56,6 +56,13 @@ The endpoint table ([§Endpoints](https://github.com/opencontainers/distribution
 
 ### Other implementations
 
+- **google/go-containerregistry (server)** — [`pkg/registry/blobs.go#L85-L104`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L85-L104), [L214](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L214)
+  ```go
+  type redirectError struct { ... Code int ... }
+  // later: http.Redirect(resp, req, rerr.Location, rerr.Code)
+  ```
+  The ggcr registry has a dedicated `redirectError` type and calls `http.Redirect` with arbitrary status codes at multiple points in blob serving — HEAD, GET, and PATCH paths all support redirect.
+
 - **cue-labs-oci (server)** — [`ociregistry/ociserver/reader.go#L61`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/reader.go#L61)
   ```go
   http.Redirect(resp, req, locs[0], http.StatusTemporaryRedirect)

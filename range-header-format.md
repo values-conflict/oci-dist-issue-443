@@ -105,6 +105,13 @@ This creates two problems:
 - **cue-labs-oci (server, conformance tests)** — [`ociregistry/ociserver/registry_test.go`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/registry_test.go)
   Test headers assert `"Range": "0-0"` for a fresh upload.
 
+- **google/go-containerregistry (server)** — [`pkg/registry/blobs.go#L391`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L391), [L426](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L426), [L447](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L447)
+  ```go
+  resp.Header().Set("Range", "0-0")                                    // POST: fresh session
+  resp.Header().Set("Range", fmt.Sprintf("0-%d", len(l.Bytes())-1))   // PATCH 202 response
+  ```
+  The ggcr registry server hardcodes `"0-0"` for fresh upload sessions (line 391) and uses the bare `0-N` format for all PATCH 202 responses — providing a third independent confirmation of both the bare format and the initial-state semantics.
+
 ## Proposed Fix
 
 ### 1. Explicitly define the bare `start-end` format as the spec format for upload Range responses

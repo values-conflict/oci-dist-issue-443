@@ -48,6 +48,16 @@ assume that all results have been received") and a worked example with four tags
   > Divergence: the v2.7.1 **server** ([`registry/handlers/tags.go`](https://github.com/distribution/distribution/blob/v2.7.1/registry/handlers/tags.go)) had no pagination at all — `GetTags` returned all tags in a single response with no `Link` header. The client was written for a pagination protocol that the server had not yet implemented.
   > Current behavior: server-side pagination with `Link` headers is present but the explicit angle-bracket format note was never restored.
 
+- **google/go-containerregistry (server)** — [`pkg/registry/manifest.go#L281-L320`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/manifest.go#L281-L320)
+  ```go
+  // https://github.com/opencontainers/distribution-spec/blob/b505e9cc53ec499edbd9c1be32298388921bb705/detail.md#tags-paginated
+  // Offset using last query parameter.
+  if last := req.URL.Query().Get("last"); last != "" { ... }
+  // Limit using n query parameter.
+  if ns := req.URL.Query().Get("n"); ns != "" { ... }
+  ```
+  The ggcr server explicitly cites `detail.md#tags-paginated` in a comment, implements both `last` and `n` query parameters — but emits **no `Link` header** in the response when results are truncated. This is direct evidence that the loss of the `Link` header documentation caused an incomplete implementation: the server knows about the pagination parameters but not the response mechanism.
+
 Despite RFC 5988 being referenced, implementations have gotten the format wrong:
 
 - **olareg** (server) — [`tag.go#L57`](https://github.com/olareg/olareg/blob/b50ccb77a369011c861d04bdd993a1f959ccb1f8/tag.go#L57)

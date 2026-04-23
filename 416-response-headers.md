@@ -67,6 +67,19 @@ having the 416 response itself carry the recovery information — it adds a roun
 
 ### Other implementations
 
+- **google/go-containerregistry (server)** — [`pkg/registry/blobs.go#L406-L419`](https://github.com/google/go-containerregistry/blob/d4f10504a3c9528aeb51c62c7a859cd0a47e07a8/pkg/registry/blobs.go#L406-L419)
+  ```go
+  if _, err := fmt.Sscanf(contentRange, "%d-%d", &start, &end); err != nil {
+      return &regError{Status: http.StatusRequestedRangeNotSatisfiable,
+          Code: "BLOB_UPLOAD_UNKNOWN", ...}
+  }
+  if start != len(b.uploads[target]) {
+      return &regError{Status: http.StatusRequestedRangeNotSatisfiable,
+          Code: "BLOB_UPLOAD_UNKNOWN", ...}
+  }
+  ```
+  The ggcr server returns 416 for an out-of-order or malformed `Content-Range`, but does **not** set `Location`, `Range`, or `Content-Length: 0` on the 416 response — the client has no in-band recovery information without a separate `GET`. This is evidence that the missing 416 headers are a real gap even in recent implementations.
+
 - **cue-labs-oci (server)** — [`ociregistry/ociserver/writer.go#L84`](https://github.com/cue-labs/oci/blob/3adeb866381942f8fcc777812752a5a9e8869b68/ociregistry/ociserver/writer.go#L84)
   Sets `Range` header in upload responses; the logic for 416 vs 202 uses the same
   `ocirequest.RangeString` helper.
